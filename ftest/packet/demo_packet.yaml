@@ -1,0 +1,7 @@
+# suit
+name: TEST-SIPPHONEV1.0.12
+description: "sipphone业务 V1.0.12 版本自动化测试"
+sipphone_suit_V1_0_12:
+  - suit_forbidden.yaml
+  #- suit_available.yaml
+

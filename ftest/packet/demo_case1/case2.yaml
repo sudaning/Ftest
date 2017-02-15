@@ -1,0 +1,16 @@
+# case2
+-
+  name: TEST00003
+  description: test
+  check: 
+    
+  setup:
+    - 
+      description: 1234...
+      action: test.py --addrs %server.redis.addrs --anum %number.5 --hiddennum %number.6 --bnum %number.4 --record %record.no --appid %appid.2 --accountid %accountid.2 --appid_status %appidstatus.normal
+  execute: 
+   
+  teardown:
+    - 
+      description: destroy redis data ...
+      action: mask_teardown_redis.py --addrs %server.redis.addrs --anum %number.5 --hiddennum %number.6 --appid %appid.2

@@ -1,0 +1,307 @@
+-
+  name: V1.0.12_000091
+  description: SIPPHONE(禁用关闭，SIPPHONE互打打开，长途关闭，禁拨400、95打开)拨打SIPPHONE(同属一个APPID)
+  expection: 呼叫正常
+  check: &comm_check_caller_callee
+    - &comm_check_redis
+      description: 检查redis是否异常
+      action:
+        script: check_redis.py
+        parameter:
+          addrs: '%server.redis.addrs'
+    - &comm_check_ras
+      description: 检查ras是否异常
+      action:
+        script: check_freeswitch.py
+        parameter:
+          host: '%server.ras_switch_esl.host'
+          port: '%server.ras_switch_esl.port'
+          password: '%server.ras_switch_esl.password'
+    - &comm_check_mysql
+      description: 检查mysql是否异常
+      action:
+        script: check_mysql.py
+        parameter:
+          host: '%server.mysql.host'
+          port: '%server.mysql.port'
+          user: '%server.mysql.user'
+          password: '%server.mysql.password'
+          dbname: '%server.mysql.dbname'
+    - &comm_check_caller
+      description: 检查主叫终端是否异常
+      action:
+        script: check_freeswitch.py
+        parameter:
+          host: '%server.caller_switch_esl.host'
+          port: '%server.caller_switch_esl.port'
+          password: '%server.caller_switch_esl.password'
+    - &comm_check_callee
+      description: 检查被叫终端是否异常
+      action:
+        script: check_freeswitch.py
+        parameter:
+          host: '%server.callee_switch_esl.host'
+          port: '%server.callee_switch_esl.port'
+          password: '%server.callee_switch_esl.password'
+
+  setup: &comm_setup
+    - &comm_setup_redis_caller
+      description: 构造主叫SIPPHONE的redis数据
+      action: &comm_setup_redis_caller_action
+        script: sipphone_calldirect_setup_redis.py
+        parameter: &comm_setup_redis_caller_parameter
+          addrs: '%server.redis.addrs'
+          sipp_num: '%number.sipphone.shenzhen_telphone1'
+          accountid: '%accountid.2'
+          appid: '%appid.3'
+          dis_num: '%number.sipphone.shenzhen_telphone3'
+          record: '%record.yes'
+          forbidden: '%forbidden.no'
+          sipp_sipp: '%sipp_sipp.yes'
+          roam: '%roam.no'
+          home_area: '%home_area.shenzhen'
+    - &comm_setup_redis_callee
+      description: 构造被叫SIPPHONE的redis数据
+      action:
+        <<: *comm_setup_redis_caller_action
+        parameter:
+          <<: *comm_setup_redis_caller_parameter
+          sipp_num: '%number.sipphone.shenzhen_telphone2'
+          dis_num: '%number.sipphone.shenzhen_telphone4'
+    - &comm_setup_ras
+      description: 构造ras的呼叫配置
+      action:
+        script: sipphone_setup_ras.py
+        parameter:
+          host: '%server.ras_switch_esl.host'
+          port: '%server.ras_switch_esl.port'
+          password: '%server.ras_switch_esl.password'
+          route_host: '%server.callee_switch_call.host'
+          route_port: '%server.callee_switch_call.port'
+          forbidden_400_95: '%forbidden_400_95.yes'
+
+  execute: &comm_execute
+    - &comm_execute_ras
+      description: 监控ras，等待呼叫到来
+      action: &comm_execute_ras_action
+        script: sipphone_calldirect_ras_call_complete.py
+        parameter: &comm_execute_ras_parameter
+          host: '%server.ras_switch_esl.host'
+          port: '%server.ras_switch_esl.port'
+          password: '%server.ras_switch_esl.password'
+          mysql_host: '%server.mysql.host'
+          mysql_port: '%server.mysql.port'
+          mysql_user: '%server.mysql.user'
+          mysql_password: '%server.mysql.password'
+          mysql_dbname: '%server.mysql.dbname'
+          sipp_num: '%number.sipphone.shenzhen_telphone1'
+          callee_num: '%number.sipphone.shenzhen_telphone2'
+          dis_num: '%number.sipphone.shenzhen_telphone3'
+          accountid: '%accountid.2'
+          appid: '%appid.3'
+          record: '%record.yes'
+          reason_code: '%sipphone_reason_code.none'
+          hangup_dir: '%hangup_dir.callee'
+          callee_sipp: 'yes'
+          timeout: '%timeout.sipphone'
+    - &comm_execute_callee
+      description: 模拟终端等待呼叫(B路)
+      action: &comm_execute_callee_action
+        script: ras_callee.py
+        parameter: &comm_execute_callee_parameter
+          host: '%server.caller_switch_esl.host'
+          port: '%server.caller_switch_esl.port'
+          password: '%server.caller_switch_esl.password'
+          caller_num: '%number.sipphone.shenzhen_telphone3'
+          callee_num: '%number.sipphone.shenzhen_telphone2'
+          ring_time: '%call_cancel.1'
+          answer_time: '%call_answer.1'
+          hangup_time: '%call_hangup.2'
+    - &comm_execute_caller
+      description: 模拟终端产生呼叫(A路)
+      action: &comm_execute_caller_action
+        script: ras_caller.py
+        parameter: &comm_execute_caller_parameter
+          host: '%server.caller_switch_esl.host'
+          port: '%server.caller_switch_esl.port'
+          password: '%server.caller_switch_esl.password'
+          caller_num: '%number.sipphone.shenzhen_telphone1'
+          callee_num: '%number.sipphone.shenzhen_telphone2'
+          server_ip: '%server.ras_switch_call.host'
+          server_port: '%server.ras_switch_call.port'
+          cancel_time: '%call_cancel.no'
+          hangup_time: '%call_hangup.no'
+
+  teardown: &comm_teardown
+    - &comm_teardown_redis_caller
+      description: 销毁主叫SIPPHONE的redis数据
+      action:
+        script: sipphone_calldirect_teardown_redis.py
+        parameter: 
+          addrs: '%server.redis.addrs'
+          sipp_num: '%number.sipphone.shenzhen_telphone1'
+          appid: '%appid.3'
+    - &comm_teardown_redis_callee
+      description: 销毁被叫SIPPHONE的redis数据
+      action:
+        script: sipphone_calldirect_teardown_redis.py 
+        parameter: 
+          addrs: '%server.redis.addrs'
+          sipp_num: '%number.sipphone.shenzhen_telphone2'
+          appid: '%appid.3'
+
+-
+  name: V1.0.12_000092
+  description: SIPPHONE(禁用关闭，SIPPHONE互打打开，长途关闭，禁拨400、95打开)拨打本域电话(固话)
+  expection: 呼叫正常
+  check: 
+    *comm_check_caller_callee
+  setup:
+    - *comm_setup_redis_caller
+    - *comm_setup_ras
+  execute: 
+    - 
+      description: 监控ras，等待呼叫到来
+      action:
+        <<: *comm_execute_ras_action
+        parameter:
+          <<: *comm_execute_ras_parameter
+          reason_code: '%sipphone_reason_code.none'
+          callee_num: '%number.shenzhen_mobilephone2'
+          callee_sipp: 'no'
+          timeout: '%timeout.20'
+    - 
+      description: 模拟终端等待呼叫(B路)
+      action:
+        <<: *comm_execute_callee_action
+        parameter:
+          <<: *comm_execute_callee_parameter
+          callee_num: '%number.shenzhen_mobilephone2'
+    - 
+      description: 模拟终端产生呼叫(A路)
+      action:
+        <<: *comm_execute_caller_action
+        parameter:
+          <<: *comm_execute_caller_parameter
+          callee_num: '%number.shenzhen_mobilephone2'
+  teardown:
+    - *comm_teardown_redis_caller
+
+-
+  name: V1.0.12_000093
+  description: SIPPHONE(禁用关闭，SIPPHONE互打打开，长途关闭，禁拨400、95打开)拨打国内长途电话(固话)
+  expection: 语音提示无权限
+  check: &comm_check_reject
+    - *comm_check_redis
+    - *comm_check_ras
+    - *comm_check_mysql
+    - *comm_check_caller
+  setup:
+    - *comm_setup_redis_caller
+    - *comm_setup_ras
+  execute: 
+    - 
+      description: 监控ras，等待呼叫到来
+      action:
+        <<: *comm_execute_ras_action
+        parameter:
+          <<: *comm_execute_ras_parameter
+          reason_code: '%sipphone_reason_code.roam_no_right'
+          callee_num: '%number.sipphone.chongqing_telphone'
+          callee_sipp: 'no'
+    - 
+      description: 模拟终端产生呼叫(A路)
+      action:
+        <<: *comm_execute_caller_action
+        parameter:
+          <<: *comm_execute_caller_parameter
+          callee_num: '%number.sipphone.chongqing_telphone'
+  teardown:
+    - *comm_teardown_redis_caller
+
+-
+  name: V1.0.12_000094
+  description: SIPPHONE(禁用关闭，SIPPHONE互打打开，长途关闭，禁拨400、95打开)拨打港澳台电话
+  expection: 语音提示无权限
+  check:
+    *comm_check_reject
+  setup:
+    - *comm_setup_redis_caller
+    - *comm_setup_ras
+  execute: 
+    - 
+      description: 监控ras，等待呼叫到来
+      action:
+        <<: *comm_execute_ras_action
+        parameter:
+          <<: *comm_execute_ras_parameter
+          reason_code: '%sipphone_reason_code.roam_no_right'
+          callee_num: '%number.sipphone.hongkong_telphone'
+          callee_sipp: 'no'
+    - 
+      description: 模拟终端产生呼叫(A路)
+      action:
+        <<: *comm_execute_caller_action
+        parameter:
+          <<: *comm_execute_caller_parameter
+          callee_num: '%number.sipphone.hongkong_telphone'          
+  teardown:
+    - *comm_teardown_redis_caller
+
+-
+  name: V1.0.12_000095
+  description: SIPPHONE(禁用关闭，SIPPHONE互打打开，长途关闭，禁拨400、95打开)拨打国际电话
+  expection: 语音提示无权限
+  check: 
+    *comm_check_reject
+  setup:
+    - *comm_setup_redis_caller
+    - *comm_setup_ras
+  execute:
+    - 
+      description: 监控ras，等待呼叫到来
+      action:
+        <<: *comm_execute_ras_action
+        parameter:
+          <<: *comm_execute_ras_parameter
+          reason_code: '%sipphone_reason_code.roam_no_right'
+          callee_num: '%number.American'
+          callee_sipp: 'no'
+    - 
+      description: 模拟终端产生呼叫(A路)
+      action:
+        <<: *comm_execute_caller_action
+        parameter:
+          <<: *comm_execute_caller_parameter
+          callee_num: '%number.American'          
+  teardown:
+    - *comm_teardown_redis_caller
+
+-
+  name: V1.0.12_000096
+  description: SIPPHONE(禁用关闭，SIPPHONE互打打开，长途关闭，禁拨400、95打开)拨打400电话
+  expection: 语音提示无权限
+  check: 
+    *comm_check_reject
+  setup:
+    - *comm_setup_redis_caller
+    - *comm_setup_ras
+  execute: 
+    - 
+      description: 监控ras，等待呼叫到来
+      action:
+        <<: *comm_execute_ras_action
+        parameter:
+          <<: *comm_execute_ras_parameter
+          reason_code: '%sipphone_reason_code.roam_no_right'
+          callee_num: '%number.400'
+          callee_sipp: 'no'
+    - 
+      description: 模拟终端产生呼叫(A路)
+      action:
+        <<: *comm_execute_caller_action
+        parameter:
+          <<: *comm_execute_caller_parameter
+          callee_num: '%number.400'
+  teardown:
+    - *comm_teardown_redis_caller

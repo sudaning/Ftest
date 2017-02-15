@@ -1,0 +1,6 @@
+# case
+name: TEST-MASK
+description: "suit1 for case1 and case2"
+case1:
+  - case1.yaml
+  - case2.yaml

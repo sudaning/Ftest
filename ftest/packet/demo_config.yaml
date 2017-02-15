@@ -1,0 +1,166 @@
+report:
+  enable: no
+  sender:
+    smtp: smtp.qq.com
+    #from: ras_33e9@qq.com
+    #user: ras_33e9@qq.com
+    #password: dzCloud33E9
+    from: sudaning_251163561@qq.com
+    user: sudaning_251163561@qq.com
+    password: Sudaning@1987
+  delivers:
+   sudaning: 635304@33e9.com
+   #yuebo: 635224@33e9.com
+   #zhairui: 635133@33e9.com
+   #zhangcai: 635136@33e9.com
+   #zhongbaihong: 635135@33e9.com
+   #liqiang(kaifa): 635216@33e9.com
+   #zhangmingxue: 635227@33e9.com
+
+server:
+  # 被测试ras服务器(esl连接和呼叫信息)
+  ras_switch_esl:
+    host: 10.9.0.108
+    port: 8021
+    password: ClueCon
+
+  ras_switch_call:
+    host: 10.9.0.108
+    port: 5080
+
+  # redis地址
+  redis:
+    addrs: 10.0.33.54:7000,10.0.33.54:7001
+
+  # mysql登录
+  mysql:
+    host: 10.0.7.61
+    port: 3306
+    user: root
+    password: 33E9.com
+    dbname: e9cloud_home
+
+  # 主叫freeswitch(esl连接和呼叫信息)
+  caller_switch_esl:
+    host: 10.0.33.38
+    port: 8021
+    password: ClueCon
+
+  caller_switch_call:
+    host: 10.0.33.38
+    port: 5090
+
+  # 被叫freeswitch(esl连接和呼叫信息)
+  callee_switch_esl:
+    host: 10.0.33.38
+    port: 8021
+    password: ClueCon
+
+  callee_switch_call:
+    host: 10.0.33.38
+    port: 5080
+
+number:
+  'shenzhen_mobilephone1': '13798283294'
+  'shenzhen_mobilephone2': '18589034543'
+  'shenzhen_mobilephone3': '18682099276'
+  'shenzhen_telphone1': '075536659019'
+  'chongqing_mobilephone1': '13436178256'
+  'guangzhou_telphone1': '02062911027'
+  'American': '0014155654852'
+  'England': '00447425900580'
+  '400': '4008808878'
+  '95': '95311'
+  'sipphone':
+    'shenzhen_telphone1': '075566603330'
+    'shenzhen_telphone2': '075523966620'
+    'shenzhen_telphone3': '075582244533'
+    'shenzhen_telphone4': '075536954091'
+    'chongqing_telphone': '02368509245'
+    'hongkong_telphone': '0085264398655'
+
+appid:
+  '1': '63348e574ff14cf484fcfeb137e38be8'
+  '2': '35da58863e9011e69680a1f6651c9441'
+  '3': '382212dc3e9011e69698a1f6651c9441'
+
+accountid:
+  '1': 'f647616b82e74888b2760e0acebf7031'
+  '2': '3b6c46a63e9011e696bfa1f6651c9441'
+  '3': 'd07608643da411e68cc67de536c9172b'
+  '4': 'be7af7e23da811e6a00e7b6ba3219638'
+
+record:
+  'yes': '1'
+  'no': '0'
+
+appidstatus:
+  'normal': '0'
+
+timeout:
+  'mask': '15'
+  'sip': '15'
+  'sipphone': '10'
+  '10': '10'
+  '20': '20'
+  '30': '30'
+
+call_ring:
+  'no': '-1'
+  '1': '1'
+  '2': '2'
+  '5': '5'
+  '10': '10'
+
+call_answer:
+  'no': '-1'
+  '1': '1'
+  '2': '2'
+  '5': '5'
+  '10': '10'
+
+call_cancel:
+  'no': '-1'
+  '1': '1'
+  '2': '2'
+  '5': '5'
+  '10': '10'
+
+call_hangup:
+  'no': '-1'
+  '1': '1'
+  '2': '2'
+  '5': '5'
+  '10': '10'
+
+forbidden:
+  'yes': '1'
+  'no': '0'
+
+sipp_sipp:
+  'yes': '1'
+  'no': '0'
+
+roam:
+  'yes': '1'
+  'no': '0'
+
+forbidden_400_95:
+  'yes': 'yes'
+  'no': 'no'
+
+home_area:
+  'shenzhen': '0755'
+
+hangup_dir:
+  'caller': 'caller'
+  'callee': 'callee'
+
+sipphone_reason_code:
+  'none': '0'
+  'sipp_sipp_appid': '107003'
+  'sipp_sipp_no_right': '107004'
+  'forbidden': '107005'
+  'roam_no_right': '107006'
+  'international_no_right': '107007'
+  'unavailable': '107008'

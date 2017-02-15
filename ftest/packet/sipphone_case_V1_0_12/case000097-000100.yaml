@@ -1,0 +1,297 @@
+-
+  name: V1.0.12_000097
+  description: >
+    本域电话回呼SIPPHONE(振铃模式：振第一个，绑定顺序：SIPPHONE1先于SIPPHONE2，
+    SIPHONE1：禁用打开，长途关闭，SIPHONE2：禁用打开，长途关闭)
+  expection: 语音提示号码失效
+  check: &comm_check_reject
+    - &comm_check_redis
+      description: 检查redis是否异常
+      action:
+        script: check_redis.py
+        parameter:
+          addrs: '%server.redis.addrs'
+    - &comm_check_ras
+      description: 检查ras是否异常
+      action:
+        script: check_freeswitch.py
+        parameter:
+          host: '%server.ras_switch_esl.host'
+          port: '%server.ras_switch_esl.port'
+          password: '%server.ras_switch_esl.password'
+    - &comm_check_mysql
+      description: 检查mysql是否异常
+      action:
+        script: check_mysql.py
+        parameter:
+          host: '%server.mysql.host'
+          port: '%server.mysql.port'
+          user: '%server.mysql.user'
+          password: '%server.mysql.password'
+          dbname: '%server.mysql.dbname'
+    - &comm_check_caller
+      description: 检查主叫终端是否异常
+      action:
+        script: check_freeswitch.py
+        parameter:
+          host: '%server.caller_switch_esl.host'
+          port: '%server.caller_switch_esl.port'
+          password: '%server.caller_switch_esl.password'
+
+  setup: &comm_setup
+    - &comm_setup_redis_user
+      description: 销毁user_num的redis数据
+      action: &comm_setup_redis_user_action
+        script: sipphone_calldirect_teardown_redis.py
+        parameter: &comm_setup_redis_user_parameter
+          addrs: '%server.redis.addrs'
+          sipp_num: '%number.shenzhen_mobilephone3'
+    - &comm_setup_redis_sipphone1
+      description: 构造SIPPHONE1的redis数据
+      action: &comm_setup_redis_sipphone1_action
+        script: sipphone_calldirect_setup_redis.py
+        parameter: &comm_setup_redis_sipphone1_parameter
+          addrs: '%server.redis.addrs'
+          sipp_num: '%number.sipphone.shenzhen_telphone1'
+          accountid: '%accountid.2'
+          appid: '%appid.3'
+          dis_num: '%number.sipphone.shenzhen_telphone3'
+          record: '%record.yes'
+          forbidden: '%forbidden.yes'
+          sipp_sipp: '%sipp_sipp.yes'
+          roam: '%roam.no'
+          home_area: '%home_area.shenzhen'
+    - &comm_setup_redis_sipphone2
+      description: 构造SIPPHONE2的redis数据
+      action: &comm_setup_redis_sipphone2_action
+        <<: *comm_setup_redis_sipphone1_action
+        parameter: &comm_setup_redis_sipphone2_parameter
+          <<: *comm_setup_redis_sipphone1_parameter
+          forbidden: '%forbidden.yes'
+          roam: '%roam.no'
+          sipp_num: '%number.sipphone.shenzhen_telphone2'
+          dis_num: '%number.sipphone.shenzhen_telphone3'
+    - &comm_setup_redis_callback
+      description: 构造回呼的redis数据(SIPPHONE1和SIPHONE2)
+      action: &comm_setup_redis_callback_action
+        script: sipphone_callback_setup_redis.py
+        parameter: &comm_setup_redis_callback_parameter
+          addrs: '%server.redis.addrs'
+          accountid: '%accountid.2'
+          appid: '%appid.3'
+          dis_num: '%number.sipphone.shenzhen_telphone3'
+          record: '%record.yes'
+          mode: '%sipphone_callback_mode.first_ring'
+          sipp_num1: '%number.sipphone.shenzhen_telphone1'
+          sipp_num2: '%number.sipphone.shenzhen_telphone2'
+    - &comm_setup_ras
+      description: 构造ras的呼叫配置
+      action:
+        script: sipphone_setup_ras.py
+        parameter:
+          host: '%server.ras_switch_esl.host'
+          port: '%server.ras_switch_esl.port'
+          password: '%server.ras_switch_esl.password'
+          route_host: '%server.callee_switch_call.host'
+          route_port: '%server.callee_switch_call.port'
+
+  execute: &comm_execute
+    - &comm_execute_ras
+      description: 监控ras，等待呼叫到来
+      action: &comm_execute_ras_action
+        script: sipphone_callback_ras_call_complete.py
+        parameter: &comm_execute_ras_parameter
+          host: '%server.ras_switch_esl.host'
+          port: '%server.ras_switch_esl.port'
+          password: '%server.ras_switch_esl.password'
+          mysql_host: '%server.mysql.host'
+          mysql_port: '%server.mysql.port'
+          mysql_user: '%server.mysql.user'
+          mysql_password: '%server.mysql.password'
+          mysql_dbname: '%server.mysql.dbname'
+          user_num: '%number.shenzhen_mobilephone3'
+          dis_num: '%number.sipphone.shenzhen_telphone3'
+          sipp_num: '%number.sipphone.shenzhen_telphone1'
+          accountid: '%accountid.2'
+          appid: '%appid.3'
+          record: '%record.yes'
+          reason_code: '%sipphone_reason_code.unavailable'
+          hangup_dir: '%hangup_dir.callee'
+          timeout: '%timeout.sipphone'
+    - &comm_execute_caller
+      description: 模拟终端产生呼叫(A路)
+      action: &comm_execute_caller_action
+        script: ras_caller.py
+        parameter: &comm_execute_caller_parameter
+          host: '%server.caller_switch_esl.host'
+          port: '%server.caller_switch_esl.port'
+          password: '%server.caller_switch_esl.password'
+          caller_num: '%number.shenzhen_mobilephone3'
+          callee_num: '%number.sipphone.shenzhen_telphone3'
+          server_ip: '%server.ras_switch_call.host'
+          server_port: '%server.ras_switch_call.port'
+          cancel_time: '%call_cancel.no'
+          hangup_time: '%call_hangup.no'
+
+  teardown: &comm_teardown
+    - &comm_teardown_redis_sipphone1
+      description: 销毁SIPPHONE1的redis数据
+      action:
+        script: sipphone_calldirect_teardown_redis.py
+        parameter: 
+          addrs: '%server.redis.addrs'
+          sipp_num: '%number.sipphone.shenzhen_telphone1'
+          appid: '%appid.3'
+    - &comm_teardown_redis_sipphone2
+      description: 销毁SIPPHONE2的redis数据
+      action:
+        script: sipphone_calldirect_teardown_redis.py 
+        parameter: 
+          addrs: '%server.redis.addrs'
+          sipp_num: '%number.sipphone.shenzhen_telphone2'
+          appid: '%appid.3'
+    - &comm_teardown_redis_callback
+      description: 销毁回呼的redis数据
+      action:
+        script: sipphone_callback_teardown_redis.py 
+        parameter: 
+          addrs: '%server.redis.addrs'
+          dis_num: '%number.sipphone.shenzhen_telphone3'
+          appid: '%appid.3'
+    - &comm_teardown_ras
+      description: 恢复ras的呼叫配置
+      action:
+        script: ras_teardown.py
+        parameter:
+          host: '%server.ras_switch_esl.host'
+          port: '%server.ras_switch_esl.port'
+          password: '%server.ras_switch_esl.password'
+
+-
+  name: V1.0.12_000098
+  description: >
+    国内长途电话回呼SIPPHONE(振铃模式：振第一个，绑定顺序：SIPPHONE1先于SIPPHONE2，
+    SIPHONE1：禁用打开，长途关闭，SIPHONE2：禁用打开，长途关闭)
+  expection: 语音提示号码失效
+  check:
+    *comm_check_reject
+  setup:
+    - 
+      <<: *comm_setup_redis_user
+      action:
+        <<: *comm_setup_redis_user_action
+        parameter: 
+          <<: *comm_setup_redis_user_parameter
+          sipp_num: '%number.chongqing_mobilephone1'
+    - *comm_setup_redis_sipphone1
+    - *comm_setup_redis_sipphone2
+    - *comm_setup_redis_callback
+    - *comm_setup_ras
+  execute:
+    -
+      <<: *comm_execute_ras
+      action:
+        <<: *comm_execute_ras_action
+        parameter: 
+          <<: *comm_execute_ras_parameter
+          user_num: '%number.chongqing_mobilephone1'
+    - 
+      <<: *comm_execute_caller
+      action:
+        <<: *comm_execute_caller_action
+        parameter: 
+          <<: *comm_execute_caller_parameter
+          caller_num: '%number.chongqing_mobilephone1'
+  teardown:
+    - *comm_teardown_redis_sipphone1
+    - *comm_teardown_redis_sipphone2
+    - *comm_teardown_redis_callback
+    - *comm_teardown_ras
+
+-
+  name: V1.0.12_000099
+  description: >
+    本域电话回呼SIPPHONE(振铃模式：振第一个，绑定顺序：SIPPHONE1先于SIPPHONE2，
+    SIPHONE1：禁用打开，长途打开，SIPHONE2：禁用打开，长途打开)
+  expection: 语音提示号码失效
+  check:
+    *comm_check_reject
+  setup:
+    - *comm_setup_redis_user
+    - 
+      <<: *comm_setup_redis_sipphone1
+      action:
+        <<: *comm_setup_redis_sipphone1_action
+        parameter: 
+          <<: *comm_setup_redis_sipphone1_parameter
+          roam: '%roam.yes'
+    - 
+      <<: *comm_setup_redis_sipphone2
+      action:
+        <<: *comm_setup_redis_sipphone2_action
+        parameter: 
+          <<: *comm_setup_redis_sipphone2_parameter
+          roam: '%roam.yes'
+    - *comm_setup_redis_callback
+    - *comm_setup_ras
+  execute:
+    - *comm_execute_ras
+    - *comm_execute_caller
+  teardown:
+    - *comm_teardown_redis_sipphone1
+    - *comm_teardown_redis_sipphone2
+    - *comm_teardown_redis_callback
+    - *comm_teardown_ras
+
+-
+  name: V1.0.12_000100
+  description: >
+    国内长途电话回呼SIPPHONE(振铃模式：振第一个，绑定顺序：SIPPHONE1先于SIPPHONE2，
+    SIPHONE1：禁用打开，长途打开，SIPHONE2：禁用打开，长途打开)
+  expection: 语音提示号码失效
+  check:
+    *comm_check_reject
+  setup:
+    - 
+      <<: *comm_setup_redis_user
+      action:
+        <<: *comm_setup_redis_user_action
+        parameter: 
+          <<: *comm_setup_redis_user_parameter
+          sipp_num: '%number.chongqing_mobilephone1'
+    - 
+      <<: *comm_setup_redis_sipphone1
+      action:
+        <<: *comm_setup_redis_sipphone1_action
+        parameter: 
+          <<: *comm_setup_redis_sipphone1_parameter
+          roam: '%roam.yes'
+    - 
+      <<: *comm_setup_redis_sipphone2
+      action:
+        <<: *comm_setup_redis_sipphone2_action
+        parameter: 
+          <<: *comm_setup_redis_sipphone2_parameter
+          roam: '%roam.yes'
+    - *comm_setup_redis_callback
+    - *comm_setup_ras
+  execute:
+    -
+      <<: *comm_execute_ras
+      action:
+        <<: *comm_execute_ras_action
+        parameter: 
+          <<: *comm_execute_ras_parameter
+          user_num: '%number.chongqing_mobilephone1'
+    - 
+      <<: *comm_execute_caller
+      action:
+        <<: *comm_execute_caller_action
+        parameter: 
+          <<: *comm_execute_caller_parameter
+          caller_num: '%number.chongqing_mobilephone1'
+  teardown:
+    - *comm_teardown_redis_sipphone1
+    - *comm_teardown_redis_sipphone2
+    - *comm_teardown_redis_callback
+    - *comm_teardown_ras

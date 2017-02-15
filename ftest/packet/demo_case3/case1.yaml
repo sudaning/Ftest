@@ -1,0 +1,14 @@
+# case1
+-
+  name: case1
+  description: mask call1
+  check:
+    - check_freeswitch.py ${freeswitch_esl}
+    - check_redis.py ${redis}
+    - check_mysql.py ${mysql}
+  constuctor:
+    - constuctor1
+    - constuctor2
+  action: 
+    - action1
+    - action2

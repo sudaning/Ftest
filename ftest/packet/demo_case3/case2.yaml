@@ -1,0 +1,10 @@
+# case2
+-
+  name: case2
+  description: mask call2
+  check:
+    - check2 server
+  constuctor:
+    - constuctor1
+  action: 
+    - action1

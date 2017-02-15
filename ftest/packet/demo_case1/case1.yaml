@@ -1,0 +1,181 @@
+# case1
+-
+  name: TEST00001
+  description: mask call success and record
+  check: &comm_check
+    - &comm_check_redis
+      description: check redis is running
+      action: >
+        check_redis.py 
+        --addrs %server.redis.addrs
+    - &comm_check_ras
+      description: check ras freeswitch is running
+      action: >
+        check_ras.py 
+        --host %server.ras_switch_esl.host 
+        --port %server.ras_switch_esl.port 
+        --password %server.ras_switch_esl.password 
+    - &comm_check_mysql
+      description: check mysql is running
+      action: >
+        check_mysql.py 
+        --host %server.mysql.host 
+        --port %server.mysql.port 
+        --user %server.mysql.user 
+        --password %server.mysql.password 
+        --dbname %server.mysql.dbname
+  setup: &comm_setup
+    - &comm_setup_redis
+      description: buliding redis data
+      action: >
+        mask_setup_redis.py 
+        --addrs %server.redis.addrs 
+        --anum %number.1 
+        --hiddennum %number.2 
+        --bnum %number.3 
+        --record %record.yes 
+        --appid %appid.1 
+        --accountid %accountid.1 
+        --appid_status %appidstatus.normal
+    - &comm_setup_ras
+      description: buliding ras data
+      action: >
+        mask_setup_ras.py 
+        --host %server.ras_switch_esl.host 
+        --port %server.ras_switch_esl.port 
+        --password %server.ras_switch_esl.password 
+        --route_host %server.callee_switch_call.host
+        --route_port %server.callee_switch_call.port
+
+  execute: &comm_execute
+    - &comm_execute_ras
+      description: ras waiting mask call(A call B hangup)
+      action: >
+        mask_ras_call_complete.py 
+        --host %server.ras_switch_esl.host 
+        --port %server.ras_switch_esl.port 
+        --password %server.ras_switch_esl.password 
+        --mysql_host %server.mysql.host 
+        --mysql_port %server.mysql.port 
+        --mysql_user %server.mysql.user 
+        --mysql_password %server.mysql.password 
+        --mysql_dbname %server.mysql.dbname 
+        --anum %number.1 
+        --hiddennum %number.2 
+        --bnum %number.3 
+        --record %record.yes 
+        --appid %appid.1 
+        --accountid %accountid.1 
+        --timeout %timeout.mask 
+        --cancel_time %call_cancel.no
+    - &comm_execute_b_call
+      description: starting mask B call
+      action: >
+        mask_ras_callee.py 
+        --host %server.callee_switch_esl.host 
+        --port %server.callee_switch_esl.port 
+        --password %server.callee_switch_esl.password 
+        --caller %number.2  
+        --callee %number.3 
+        --ring_time %call_ring.1
+        --answer_time %call_answer.1
+        --hangup_time %call_hangup.5
+    - &comm_execute_a_call
+      description: starting mask A call
+      action: >
+        mask_ras_caller.py 
+        --host %server.caller_switch_esl.host 
+        --port %server.caller_switch_esl.port 
+        --password %server.caller_switch_esl.password 
+        --caller %number.1 
+        --callee %number.2 
+        --server_ip %server.ras_switch_call.host 
+        --server_port %server.ras_switch_call.port 
+        --cancel_time %call_cancel.no 
+        --hangup_time %call_hangup.no
+
+  teardown: &comm_teardown
+    - &comm_teardown_redis
+      description: destroy redis data
+      action: >
+        mask_teardown_redis.py 
+        --addrs %server.redis.addrs 
+        --anum %number.1 
+        --hiddennum %number.2 
+        --appid %appid.1
+
+-
+  name: TEST00002
+  description: mask call success and not record
+  check: 
+    *comm_check
+  setup:
+    - 
+      description: buliding redis data
+      action: >
+        mask_setup_redis.py 
+        --addrs %server.redis.addrs 
+        --anum %number.5 
+        --hiddennum %number.6 
+        --bnum %number.4 
+        --record %record.no 
+        --appid %appid.2 
+        --accountid %accountid.2 
+        --appid_status %appidstatus.normal
+    - *comm_setup_ras
+  execute: 
+    - 
+      description: ras waiting mask call
+      action: >
+        mask_ras_call_complete.py 
+        --host %server.ras_switch_esl.host 
+        --port %server.ras_switch_esl.port 
+        --password %server.ras_switch_esl.password 
+        --mysql_host %server.mysql.host 
+        --mysql_port %server.mysql.port 
+        --mysql_user %server.mysql.user 
+        --mysql_password %server.mysql.password 
+        --mysql_dbname %server.mysql.dbname 
+        --anum %number.5 
+        --hiddennum %number.6 
+        --bnum %number.4 
+        --record %record.no 
+        --appid %appid.2 
+        --accountid %accountid.2 
+        --timeout %timeout.mask 
+        --cancel_time %call_cancel.no
+    - 
+      description: starting mask B call
+      action: >
+        mask_ras_callee.py 
+        --host %server.callee_switch_esl.host 
+        --port %server.callee_switch_esl.port 
+        --password %server.callee_switch_esl.password 
+        --caller %number.6  
+        --callee %number.4 
+        --ring_time %call_ring.1
+        --answer_time %call_answer.1
+        --hangup_time %call_hangup.5
+    - 
+      description: starting mask call
+      action: >
+        mask_ras_caller.py 
+        --host %server.caller_switch_esl.host 
+        --port %server.caller_switch_esl.port 
+        --password %server.caller_switch_esl.password 
+        --caller %number.5 
+        --callee %number.6 
+        --server_ip %server.ras_switch_call.host 
+        --server_port %server.ras_switch_call.port 
+        --cancel_time %call_cancel.no 
+        --hangup_time %call_hangup.no
+
+  teardown:
+    - 
+      description: destroy redis data
+      action: >
+        mask_teardown_redis.py 
+        --addrs %server.redis.addrs 
+        --anum %number.5 
+        --hiddennum %number.6 
+        --appid %appid.2
