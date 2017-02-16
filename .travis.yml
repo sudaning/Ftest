@@ -26,9 +26,9 @@ install:
   - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION
   - source activate test-environment
   - cd lib
-  - tar zxf swig-3.0.12.tar.gz
+  - sudo tar zxf swig-3.0.12.tar.gz
   - cd swig-3.0.12
-  - ./configure && make && make install
+  - sudo ./configure && sudo make && sudo make install
   - cd ../..
   - python setup.py install  # install ftest
 
