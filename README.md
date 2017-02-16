@@ -1,4 +1,4 @@
-#Welcome to Neko
+#Welcome to Ftest
 ![](https://travis-ci.org/sudaning/Ftest.svg?branch=master)
 ![](https://img.shields.io/pypi/v/pyFtest.svg)
 ![](https://img.shields.io/badge/python-3.5-green.svg)
@@ -37,7 +37,7 @@ script_dir_path = os.path.join(run_path, 'script')
 report_dir_path = os.path.join(run_path, 'report')
 
 c = caseMgr(config_file_path, packet_file_path, script_dir_path)
-c.load() and c.run(options.rep_mod, report_dir_path, options.rep_success, options.silence)
+c.load() and c.run('xls', report_dir_path, True, False)
 ```
 
 ##From the author
