@@ -7,7 +7,7 @@ from ftest import caseMgr
 
 if __name__ == '__main__':
 	
-	parser = OptionParser(usage="%prog [--packet] [--config] [--script] [--report] [--rep_mod] [-l] [-s] [-r] [--version]", version="%prog 1.0")
+	parser = OptionParser(usage="%prog [--packet] [--config] [--script] [--report] [--rep_mod] [-s] [-r] [--version]", version="%prog 1.0")
 	parser.add_option('--packet', dest='packet', default='packet/demo_packet.yaml', help='test pakcet yaml file [default: %default]')
 	parser.add_option('--config', dest='config', default='packet/demo_config.yaml', help='config yaml file [default: %default]')
 	parser.add_option('--script', dest='script', default='script', help='script directory [default: %default]')
