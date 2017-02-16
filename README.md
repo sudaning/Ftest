@@ -27,15 +27,17 @@ In [/scripts](https://github.com/sudaning/Ftest/tree/master/scripts) , there are
 ##Examples
 
 ```python
-import time  
-from neko import ProcBar, color_str  
-p = ProcBar(mod='details')  
-total = 56  
-p.set_details(total, widget_type="percent").start("Dance up...")  
-for i in range(0, total + 1):  
-    if p.move():  
-    time.sleep(0.1)  
-p.stop(color_str("ending", "sky_blue"))
+import os
+from neko import caseMgr
+
+run_path = os.path.split(os.path.realpath(sys.argv[0]))[0]
+config_file_path = os.path.join(run_path, 'packet/demo_config.yaml')
+packet_file_path = os.path.join(run_path, 'packet/demo_packet.yaml')
+script_dir_path = os.path.join(run_path, 'script')
+report_dir_path = os.path.join(run_path, 'report')
+
+c = caseMgr(config_file_path, packet_file_path, script_dir_path)
+c.load() and c.run(options.rep_mod, report_dir_path, options.rep_success, options.silence)
 ```
 
 ##From the author

@@ -1,27 +1,27 @@
 from setuptools import find_packages, setup
-from neko import __version__ as version
 
+version = '1.1'
 author = 'Daning Su'
 author_email = 'sudaning@sina.com'
-description = "A pure Python library designed to make it easy and quick to code for Neko"
+description = "A pure Python library designed to auto-test for FREESWITCH easy "
 
 with open('README.rst') as f:
     long_description = f.read()
 
 install_requires = [
-	#'numpy>=1.11.1',
-	#'matplotlib>=1.5.2',
-	#'scipy>=0.18.0',
+	'pyNeko>=3.0',
+	'pyyaml>=3.12',
+	'xlwt>=1.2.0',
 ]
 
 license = 'LICENSE'
 
-name = 'pyNeko'
+name = 'pyFtest'
 packages = [
-	'neko',
+	'ftest',
 ]
 platforms = ['linux']
-url = 'https://github.com/sudaning/PytLab-Neko'
+url = 'https://github.com/sudaning/Ftest'
 download_url = ''
 classifiers = [
 	'Development Status :: 3 - Alpha',
@@ -29,8 +29,6 @@ classifiers = [
 	'License :: OSI Approved :: MIT License',
 	'Programming Language :: Python :: 2',
 	'Programming Language :: Python :: 2.7',
-	'Programming Language :: Python :: 3',
-	'Programming Language :: Python :: 3.5',
 ]
 
 setup(author=author,
