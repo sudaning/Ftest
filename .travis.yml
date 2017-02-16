@@ -28,8 +28,8 @@ install:
   - cd lib
   - tar zxf swig-3.0.12.tar.gz
   - cd swig-3.0.12
+  - ./configure && make && make install
   - cd ../..
-  - configure;make;make install
   - python setup.py install  # install ftest
 
 # command to run tests
