@@ -3,7 +3,7 @@ python:
   - "2.7"
 
 notifications:
-  email: true
+  email: false
 
 install:
   - sudo apt-get update
@@ -25,12 +25,14 @@ install:
   # Replace dep1 dep2 ... with your dependencies
   - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION
   - source activate test-environment
+
+  # install ftest
   - cd lib
   - sudo tar zxf swig-3.0.12.tar.gz
   - cd swig-3.0.12
   - sudo ./configure && sudo make && sudo make install
   - cd ../..
-  - python setup.py install  # install ftest
+  - python setup.py install  
 
 # command to run tests
 script:
