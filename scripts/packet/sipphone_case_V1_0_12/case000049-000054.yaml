@@ -134,6 +134,7 @@
   name: V1.0.12_000050
   description: SIPPHONE(禁用关闭，SIPPHONE互打关闭，长途关闭，禁拨400、95关闭)拨打本域电话(固话)
   expection: 呼叫正常
+  active: yes
   check: &comm_check_caller_callee
     - *comm_check_redis
     - *comm_check_ras
@@ -189,6 +190,7 @@
   description: SIPPHONE(禁用关闭，SIPPHONE互打关闭，长途关闭，禁拨400、95关闭)拨打国内长途电话(固话)
   expection: 语音提示无权限
   active: yes
+  active: yes
   check: 
     *comm_check_reject
   setup:
@@ -218,6 +220,7 @@
   name: V1.0.12_000052
   description: SIPPHONE(禁用关闭，SIPPHONE互打关闭，长途关闭，禁拨400、95关闭)拨打港澳台电话
   expection: 语音提示无权限
+  active: yes
   active: yes
   check: 
     *comm_check_reject
@@ -249,6 +252,7 @@
   description: SIPPHONE(禁用关闭，SIPPHONE互打关闭，长途关闭，禁拨400、95关闭)拨打国际电话
   expection: 语音提示无权限
   active: yes
+  active: yes
   check: 
     *comm_check_reject
   setup:
@@ -278,6 +282,7 @@
   name: V1.0.12_000054
   description: SIPPHONE(禁用关闭，SIPPHONE互打关闭，长途关闭，禁拨400、95关闭)拨打400电话
   expection: 语音提示无权限
+  active: yes
   active: yes
   check: 
     *comm_check_reject

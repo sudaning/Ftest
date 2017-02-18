@@ -5,8 +5,6 @@ from optparse import OptionParser
 from datetime import datetime
 from neko import color_str, ProcBar
 
-language = "Chinese"
-
 try:
 	import xlwt
 except ImportError as err:
@@ -173,68 +171,75 @@ class caseReport(repComm):
 # 报告管理类管理一个测试任务，其中包含多个测试用例
 class report(repComm):
 
-	__summary_title = language == 'Chinese' and "测试报告" or "TEST REPORT"
-
-	__summary_subtitle_abstract = language == 'Chinese' and "简介" or "Abstract"
-	__summary_subtitle_abstract_name = language == 'Chinese' and "名字" or "Name"
-	__summary_subtitle_abstract_description = language == 'Chinese' and "描述" or "Description"
-
-	__summary_subtitle_period = language == 'Chinese' and "时间" or "Period"
-	__summary_subtitle_period_from = language == 'Chinese' and "开始" or "From"
-	__summary_subtitle_period_to = language == 'Chinese' and "结束" or "To"
-	__summary_subtitle_period_duration = language == 'Chinese' and "耗时" or "Duration"
-	
-	__summary_subtitle_schedule = language == 'Chinese' and "计划" or "Schedule"
-	__summary_subtitle_schedule_suit = language == 'Chinese' and "组(套)" or "Suit"
-	__summary_subtitle_schedule_case = language == 'Chinese' and "活动" or "Case"
-	__summary_subtitle_schedule_task = language == 'Chinese' and "用例" or "Task"
-	__summary_subtitle_schedule_script = language == 'Chinese' and "脚本" or "Script"
-
-	__summary_subtitle_result = language == 'Chinese' and "结果" or "Result"
-	__summary_subtitle_result_passed = language == 'Chinese' and "通过" or "Passed"
-	__summary_subtitle_result_failed = language == 'Chinese' and "失败" or "Failed"
-	__summary_subtitle_result_error = language == 'Chinese' and "错误" or "Error"
-	__summary_subtitle_result_unactive = language == 'Chinese' and "未激活" or "Unactive"
-	__summary_subtitle_result_total = language == 'Chinese' and "总计" or "Total"
-	
-	__sheet_subtitle_abstract = language == 'Chinese' and "简介" or "Abstract"
-	__sheet_subtitle_abstract_name = language == 'Chinese' and "名字" or "Name"
-	__sheet_subtitle_abstract_description = language == 'Chinese' and "描述" or "Description"
-	__sheet_subtitle_abstract_expection = language == 'Chinese' and "预期" or "Expection"
-	__sheet_subtitle_abstract_config = language == 'Chinese' and "所属配置" or "Config"
-	__sheet_subtitle_abstract_result = language == 'Chinese' and "结果" or "Result"
-	__sheet_subtitle_abstract_result_passed = language == 'Chinese' and "通过" or "Passed"
-	__sheet_subtitle_abstract_result_failed = language == 'Chinese' and "失败" or "Failed"
-	__sheet_subtitle_abstract_result_unactive = language == 'Chinese' and "未激活" or "Unactive"
-
-	__sheet_subtitle_period = language == 'Chinese' and "时间" or "Period"
-	__sheet_subtitle_period_from = language == 'Chinese' and "开始" or "From"
-	__sheet_subtitle_period_to = language == 'Chinese' and "结束" or "To"
-	__sheet_subtitle_period_duration = language == 'Chinese' and "耗时" or "Duration"
-
-	__sheet_subtitle_detail = language == 'Chinese' and "详情" or "Details"
-	__sheet_subtitle_detail_stage = language == 'Chinese' and "阶段" or "Stage"
-	__sheet_subtitle_detail_index = language == 'Chinese' and "序号" or "Index"
-	__sheet_subtitle_detail_result = language == 'Chinese' and "结果" or "Result"
-	__sheet_subtitle_detail_result_success = language == 'Chinese' and "成功" or "Success"
-	__sheet_subtitle_detail_result_failed = language == 'Chinese' and "失败" or "Failed"
-	__sheet_subtitle_detail_description = language == 'Chinese' and "描述" or "Description"
-	__sheet_subtitle_detail_start_time = language == 'Chinese' and "开始时间" or "Start Time"
-	__sheet_subtitle_detail_end_time = language == 'Chinese' and "结束时间" or "End Time"
-	__sheet_subtitle_detail_duration = language == 'Chinese' and "耗时" or "Duration"
-	__sheet_subtitle_detail_script = language == 'Chinese' and "运行脚本" or "Script Running"
-	__sheet_subtitle_detail_detail = language == 'Chinese' and "详细过程" or "Details"
-
-	def __init__(self, name="", description="", expection=""):
+	def __init__(self, name="", description="", expection="", conf = None):
 		self.__case_list = [] # 测试用例列表
 		self.__report_dir = ""
 		self.__rep_xls_file = ""
 		self.__rep_xml_file = ""
+		self.__conf = conf
+
+		self.__language = conf.get("report", {}).get("language", "Chinese") if conf else "Chinese"
+
 		repComm.__init__(self, name=name, description=description, expection=expection)
+
+		self.__summary_title = self.__language == 'Chinese' and "测试报告" or "TEST REPORT"
+
+		self.__summary_subtitle_abstract = self.__language == 'Chinese' and "简介" or "Abstract"
+		self.__summary_subtitle_abstract_name = self.__language == 'Chinese' and "名字" or "Name"
+		self.__summary_subtitle_abstract_description = self.__language == 'Chinese' and "描述" or "Description"
+
+		self.__summary_subtitle_period = self.__language == 'Chinese' and "时间" or "Period"
+		self.__summary_subtitle_period_from = self.__language == 'Chinese' and "开始" or "From"
+		self.__summary_subtitle_period_to = self.__language == 'Chinese' and "结束" or "To"
+		self.__summary_subtitle_period_duration = self.__language == 'Chinese' and "耗时" or "Duration"
+		
+		self.__summary_subtitle_schedule = self.__language == 'Chinese' and "计划" or "Schedule"
+		self.__summary_subtitle_schedule_suit = self.__language == 'Chinese' and "组(套)" or "Suit"
+		self.__summary_subtitle_schedule_case = self.__language == 'Chinese' and "活动" or "Case"
+		self.__summary_subtitle_schedule_task = self.__language == 'Chinese' and "用例" or "Task"
+		self.__summary_subtitle_schedule_script = self.__language == 'Chinese' and "脚本" or "Script"
+
+		self.__summary_subtitle_result = self.__language == 'Chinese' and "结果" or "Result"
+		self.__summary_subtitle_result_passed = self.__language == 'Chinese' and "通过" or "Passed"
+		self.__summary_subtitle_result_failed = self.__language == 'Chinese' and "失败" or "Failed"
+		self.__summary_subtitle_result_error = self.__language == 'Chinese' and "错误" or "Error"
+		self.__summary_subtitle_result_unactive = self.__language == 'Chinese' and "未激活" or "Unactive"
+		self.__summary_subtitle_result_total = self.__language == 'Chinese' and "总计" or "Total"
+		
+		self.__summary_subtitle_signature = self.__language == 'Chinese' and "来自遥远星星的自动化测试程序" or "The auto-test from other planet"
+
+		self.__sheet_subtitle_abstract = self.__language == 'Chinese' and "简介" or "Abstract"
+		self.__sheet_subtitle_abstract_name = self.__language == 'Chinese' and "名字" or "Name"
+		self.__sheet_subtitle_abstract_description = self.__language == 'Chinese' and "描述" or "Description"
+		self.__sheet_subtitle_abstract_expection = self.__language == 'Chinese' and "预期" or "Expection"
+		self.__sheet_subtitle_abstract_config = self.__language == 'Chinese' and "所属配置" or "Config"
+		self.__sheet_subtitle_abstract_result = self.__language == 'Chinese' and "结果" or "Result"
+		self.__sheet_subtitle_abstract_result_passed = self.__language == 'Chinese' and "通过" or "Passed"
+		self.__sheet_subtitle_abstract_result_failed = self.__language == 'Chinese' and "失败" or "Failed"
+		self.__sheet_subtitle_abstract_result_unactive = self.__language == 'Chinese' and "未激活" or "Unactive"
+
+		self.__sheet_subtitle_period = self.__language == 'Chinese' and "时间" or "Period"
+		self.__sheet_subtitle_period_from = self.__language == 'Chinese' and "开始" or "From"
+		self.__sheet_subtitle_period_to = self.__language == 'Chinese' and "结束" or "To"
+		self.__sheet_subtitle_period_duration = self.__language == 'Chinese' and "耗时" or "Duration"
+
+		self.__sheet_subtitle_detail = self.__language == 'Chinese' and "详情" or "Details"
+		self.__sheet_subtitle_detail_stage = self.__language == 'Chinese' and "阶段" or "Stage"
+		self.__sheet_subtitle_detail_index = self.__language == 'Chinese' and "序号" or "Index"
+		self.__sheet_subtitle_detail_result = self.__language == 'Chinese' and "结果" or "Result"
+		self.__sheet_subtitle_detail_result_success = self.__language == 'Chinese' and "成功" or "Success"
+		self.__sheet_subtitle_detail_result_failed = self.__language == 'Chinese' and "失败" or "Failed"
+		self.__sheet_subtitle_detail_description = self.__language == 'Chinese' and "描述" or "Description"
+		self.__sheet_subtitle_detail_start_time = self.__language == 'Chinese' and "开始时间" or "Start Time"
+		self.__sheet_subtitle_detail_end_time = self.__language == 'Chinese' and "结束时间" or "End Time"
+		self.__sheet_subtitle_detail_duration = self.__language == 'Chinese' and "耗时" or "Duration"
+		self.__sheet_subtitle_detail_script = self.__language == 'Chinese' and "运行脚本" or "Script Running"
+		self.__sheet_subtitle_detail_detail = self.__language == 'Chinese' and "详细过程" or "Details"
+
 
 	# ‘阶段’翻译
 	def stage(self, s):
-		if language == 'Chinese':
+		if self.__language == 'Chinese':
 			return s == "check" and "检查" or \
 				s == "setup" and "初始化" or \
 				s == "execute" and "执行" or \
@@ -649,7 +654,7 @@ class report(repComm):
 		if not silence:
 			p.stop(color_str("OK", "green") + " 路径:" + f)
 
-	def mail(self, conf, silence):
+	def mail(self, silence):
 		if not silence:
 			p = ProcBar().start("REPORT 02 " + "发送报告邮件...")
 		if self.__mod in ["xls"]:
@@ -669,12 +674,12 @@ class report(repComm):
 			return
 
 		file_name = os.path.split(f)[-1]
-		smtp = conf.get("report", {}).get("sender", {}).get("smtp", "")
-		sender = conf.get("report", {}).get("sender", {}).get("from", "")
-		user = conf.get("report", {}).get("sender", {}).get("user", "")
-		password = conf.get("report", {}).get("sender", {}).get("password", "")
-		delivers = conf.get("report", {}).get("delivers", {})
-		enable = conf.get("report", {}).get("enable", "")
+		smtp = self.__conf.get("report", {}).get("sender", {}).get("smtp", "")
+		sender = self.__conf.get("report", {}).get("sender", {}).get("from", "")
+		user = self.__conf.get("report", {}).get("sender", {}).get("user", "")
+		password = self.__conf.get("report", {}).get("sender", {}).get("password", "")
+		delivers = self.__conf.get("report", {}).get("delivers", {})
+		enable = self.__conf.get("report", {}).get("enable", "")
 
 		if not smtp or not sender or not user or not password or not delivers:
 			if not silence:
@@ -704,59 +709,59 @@ class report(repComm):
 		s += '<br />'
 		s += '</div>'
 		s += '<div style="font-size: 27px;">'
-		s += '<span style="font-family: 微软雅黑, Tahoma;"><b>自动化测试结果：</b></span>'
+		s += '<span style="font-family: 微软雅黑, Tahoma;"><b>%s</b></span>' % self.__summary_title.encode('utf-8')
 		s += '</div>'
 		s += '<div style="font-size: 24px;">'
 		s += '<br />'
 		s += '</div>'
 		s += '<div style="font-size: 24px;">'
-		s += '<span style="font-family: 微软雅黑, Tahoma;"><font color="#993300"><b>简介</b></font></span>'
+		s += '<span style="font-family: 微软雅黑, Tahoma;"><font color="#993300"><b>%s</b></font></span>' % self.__summary_subtitle_abstract.encode('utf-8')
 		s += '</div>'
 		s += '<div style="">'
 		s += '<span style="background-color: rgba(0, 0, 0, 0); font-family: \'微软雅黑, Tahoma\'; font-size: 16px; line-height: 1.5;"></span>'
-		s += '<font face="微软雅黑, Tahoma">名字：{0}</font>'.format(self.name())
+		s += '<font face="微软雅黑, Tahoma">{0}：{1}</font>'.format(self.__summary_subtitle_abstract_name.encode('utf-8'), self.name())
 		s += '</div>'
 		s += '<div style="">'
-		s += '<font face="微软雅黑, Tahoma">描述：{0}</font>'.format(self.description().encode('utf-8'))
-		s += '</div>'
-		s += '<div style="">'
-		s += '<font face="微软雅黑, Tahoma"><br /></font>'
-		s += '</div>'
-		s += '<div style="">'
-		s += '<font face="微软雅黑, Tahoma"><font><b style="color: rgb(153, 51, 0); font-size: x-large; line-height: 36px;">时间</b></font></font>'
-		s += '</div>'
-		s += '<div style="">'
-		s += '<font face="微软雅黑, Tahoma"><span style="line-height: 24px;"></span>开始：{0}</font>'.format(self.start_time())
-		s += '</div>'
-		s += '<div style="">'
-		s += '<font face="微软雅黑, Tahoma"><span style="line-height: 24px;"></span>结束：{0}</font>'.format(self.end_time())
-		s += '</div>'
-		s += '<div style="">'
-		s += '<font face="微软雅黑, Tahoma"><span style="line-height: 24px;"></span>结束：{0}</font>'.format(self.duration_time())
+		s += '<font face="微软雅黑, Tahoma">{0}：{1}</font>'.format(self.__summary_subtitle_abstract_description.encode('utf-8'), self.description().encode('utf-8'))
 		s += '</div>'
 		s += '<div style="">'
 		s += '<font face="微软雅黑, Tahoma"><br /></font>'
 		s += '</div>'
 		s += '<div style="">'
-		s += '<span style="color: rgb(153, 51, 0); font-family: 微软雅黑, Tahoma; font-size: 24px;"><b>计划</b></span>'
+		s += '<font face="微软雅黑, Tahoma"><font><b style="color: rgb(153, 51, 0); font-size: x-large; line-height: 36px;">%s</b></font></font>' % self.__summary_subtitle_period.encode('utf-8')
 		s += '</div>'
 		s += '<div style="">'
-		s += '<font face="微软雅黑, Tahoma">组（套）：{0}</font>'.format(len(set([case.suit_path() for case in self.__case_list])))
+		s += '<font face="微软雅黑, Tahoma"><span style="line-height: 24px;"></span>{0}：{1}</font>'.format(self.__summary_subtitle_period_from.encode('utf-8'), self.start_time())
 		s += '</div>'
 		s += '<div style="">'
-		s += '<font face="微软雅黑, Tahoma">活动：{0}</font>'.format(len(set([case.case_path() for case in self.__case_list])))
+		s += '<font face="微软雅黑, Tahoma"><span style="line-height: 24px;"></span>{0}：{1}</font>'.format(self.__summary_subtitle_period_to.encode('utf-8'), self.end_time())
 		s += '</div>'
 		s += '<div style="">'
-		s += '<font face="微软雅黑, Tahoma">用例：{0}</font>'.format(len(self.__case_list))
+		s += '<font face="微软雅黑, Tahoma"><span style="line-height: 24px;"></span>{0}：{1}</font>'.format(self.__summary_subtitle_period_duration.encode('utf-8'), self.duration_time())
 		s += '</div>'
 		s += '<div style="">'
-		s += '<font face="微软雅黑, Tahoma">脚本：{0}</font>'.format(sum([len([proc for proc in case.procs() if proc.isrun() == "yes"]) for case in self.__case_list]))
+		s += '<font face="微软雅黑, Tahoma"><br /></font>'
+		s += '</div>'
+		s += '<div style="">'
+		s += '<span style="color: rgb(153, 51, 0); font-family: 微软雅黑, Tahoma; font-size: 24px;"><b>%s</b></span>' % self.__summary_subtitle_schedule.encode('utf-8')
+		s += '</div>'
+		s += '<div style="">'
+		s += '<font face="微软雅黑, Tahoma">{0}：{1}</font>'.format(self.__summary_subtitle_schedule_suit.encode('utf-8'), len(set([case.suit_path() for case in self.__case_list])))
+		s += '</div>'
+		s += '<div style="">'
+		s += '<font face="微软雅黑, Tahoma">{0}：{1}</font>'.format(self.__summary_subtitle_schedule_case.encode('utf-8'),len(set([case.case_path() for case in self.__case_list])))
+		s += '</div>'
+		s += '<div style="">'
+		s += '<font face="微软雅黑, Tahoma">{0}：{1}</font>'.format(self.__summary_subtitle_schedule_task.encode('utf-8'),len(self.__case_list))
+		s += '</div>'
+		s += '<div style="">'
+		s += '<font face="微软雅黑, Tahoma">{0}：{1}</font>'.format(self.__summary_subtitle_schedule_script.encode('utf-8'), sum([len([proc for proc in case.procs() if proc.isrun() == "yes"]) for case in self.__case_list]))
 		s += '</div>'
 		s += '<div style="">'
 		s += '<br />'
 		s += '</div>'
 		s += '<div style="">'
-		s += '<font color="#993300" face="微软雅黑, Tahoma" size="5"><b>结果</b></font>'
+		s += '<font color="#993300" face="微软雅黑, Tahoma" size="5"><b>%s</b></font>' % self.__summary_subtitle_result.encode('utf-8')
 		s += '</div>'
 		s += '<div style="font-size: 24px;">'
 		s += '<table border="1" bordercolor="#000000" cellpadding="2" cellspacing="0" style="font-size: 10pt; border-collapse:collapse; border:none" width="50%"> '
@@ -766,13 +771,14 @@ class report(repComm):
 		s += '<td width="50%" style="border: solid 1 #000000" nowrap=""><font size="2">'
 		s += '<div>'
 		s += '<font face="Verdana"></font>'
-		s += '<span style="font-family: 微软雅黑; background-color: transparent; line-height: 1.5;">成功</span>'
+		s += '<span style="font-family: 微软雅黑; background-color: transparent; line-height: 1.5;">%s</span>' % self.__summary_subtitle_result_passed.encode('utf-8')
 		s += '</div></font></td>'
 		s += '<td width="50%" style="border: solid 1 #000000" nowrap=""><font face="微软雅黑">{0}</font></td> '.format(success)
 		s += '</tr> '
 
 		s += '<tr> '
-		s += '<td width="50%" style="border: solid 1 #000000" nowrap=""><span style="font-family: 微软雅黑; font-size: 14px; line-height: 21px; white-space: normal;">失败</span></td> '
+		s += '<td width="50%" style="border: solid 1 #000000" nowrap="">'
+		s += '<span style="font-family: 微软雅黑; font-size: 14px; line-height: 21px; white-space: normal;">%s</span></td>' % self.__summary_subtitle_result_failed.encode('utf-8')
 		s += '<td width="50%" style="border: solid 1 #000000" nowrap=""><font size="2" face="微软雅黑">'
 		s += '<div>'
 		s += '{0}'.format(failed)
@@ -783,7 +789,7 @@ class report(repComm):
 		s += '<td width="50%" style="border: solid 1 #000000" nowrap=""><font size="2" face="微软雅黑">'
 		s += '<div>'
 		s += '<span style="font-size: 14px; white-space: normal; background-color: transparent; line-height: 1.5;"></span>'
-		s += '<span style="font-size: 14px; line-height: 21px; white-space: normal; background-color: transparent;">错误</span>'
+		s += '<span style="font-size: 14px; line-height: 21px; white-space: normal; background-color: transparent;">%s</span>' % self.__summary_subtitle_result_error.encode('utf-8')
 		s += '</div></font></td> '
 		s += '<td width="50%" style="border: solid 1 #000000" nowrap=""><font size="2" face="微软雅黑">'
 		s += '<div>'
@@ -795,7 +801,7 @@ class report(repComm):
 		s += '<td width="50%" style="border: solid 1 #000000" nowrap=""><font size="2" face="微软雅黑">'
 		s += '<div>'
 		s += '<span style="font-size: 14px; white-space: normal; background-color: transparent; line-height: 1.5;"></span>'
-		s += '<span style="font-size: 14px; line-height: 21px; white-space: normal; background-color: transparent;">未激活</span>'
+		s += '<span style="font-size: 14px; line-height: 21px; white-space: normal; background-color: transparent;">%s</span>' % self.__summary_subtitle_result_unactive.encode('utf-8')
 		s += '</div></font></td> '
 		s += '<td width="50%" style="border: solid 1 #000000" nowrap=""><font size="2" face="微软雅黑">'
 		s += '<div>'
@@ -806,7 +812,7 @@ class report(repComm):
 		s += '<tr> '
 		s += '<td width="50%" style="border: solid 1 #000000" nowrap=""><font size="2" face="微软雅黑">'
 		s += '<div>'
-		s += '<span style="background-color: transparent; line-height: 1.5;">总计</span>'
+		s += '<span style="background-color: transparent; line-height: 1.5;">%s</span>'% self.__summary_subtitle_result_total.encode('utf-8')
 		s += '</div></font></td> '
 		s += '<td width="50%" style="border: solid 1 #000000" nowrap=""><font size="2" face="微软雅黑">'
 		s += '<div>'
@@ -826,7 +832,7 @@ class report(repComm):
 		s += '<div style="MARGIN: 10px; FONT-FAMILY: verdana; FONT-SIZE: 10pt">'
 		s += '<div>'
 		s += '<div>'
-		s += '来自遥远星星的自动化测试程序'
+		s += '%s' % self.__summary_subtitle_signature.encode('utf-8')
 		s += '</div>'
 		s += '</div>'
 		s += '<div>'
@@ -853,7 +859,7 @@ class report(repComm):
 
 		#加邮件头
 		msg['from'] = sender
-		msg['subject'] = Header(self.name() + '自动化测试结果' + self.start_time(),'UTF-8')
+		msg['subject'] = Header('%s-%s(%s)' % (self.__summary_title.encode('utf-8'), self.name(), self.start_time()),'UTF-8')
 		msg['to'] = ";".join(delivers.values())
 		#发送邮件
 		try:
@@ -873,7 +879,10 @@ class report(repComm):
 				else:
 					s += str(x) + " "
 			else:
-				print(color_str(s, "red"))
+				if not silence:
+					p.stop(color_str(s, "red"))
+				else:
+					print(color_str(s, "red"))
 		except smtplib.SMTPSenderRefused:
 			print(color_str('Sender refused', "red"))
 		except smtplib.SMTPException as e:

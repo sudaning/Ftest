@@ -452,7 +452,7 @@ class caseMgr:
 
 	def run(self, rep_mod, rep_dir, rep_success, silence):
 		cnt = 0
-		rep = report()
+		rep = report(conf=self.__config)
 		rep.report_dir(rep_dir)
 		rep.start_time("now")
 		# 循环测试用例packet --> suit(s) --> case(s)
@@ -493,7 +493,7 @@ class caseMgr:
 			rep.description(cc["packet_description"])
 			rep.end_time("now")
 			rep.generation(rep_mod, rep_success, silence)
-			rep.mail(self.__config, silence)
+			rep.mail(silence)
 
 			s = color_str("OK", "green")
 			if silence:

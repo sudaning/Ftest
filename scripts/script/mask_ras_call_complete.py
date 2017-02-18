@@ -292,7 +292,7 @@ if __name__ == '__main__':
 			record_file_path = os.path.join('/'.join(event.getHeader("Record-File-Path").split('/')[:-1]), \
 				"%s_%s_%s_%s_%s_CALLIN.wav" % (options.appid, options.anum, options.bnum, self.__A['sip_call_id'][:32], self.__B['call_time']))
 			try:
-				from pyssh import Ssh
+				from neko import Ssh
 				ssh = Ssh(options.host)
 				stdin, stdout, stderr = ssh.exec_command('ls -l ' + record_file_path)
 				if not stdout.readlines():

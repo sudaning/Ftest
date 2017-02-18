@@ -4,6 +4,7 @@
     本域电话回呼SIPPHONE(振铃模式：振第一个，绑定顺序：SIPPHONE1先于SIPPHONE2，
     SIPHONE1：禁用关闭，长途关闭，SIPHONE2：禁用关闭，长途关闭)
   expection: SIPPhone1呼叫正常，SIPPhone2不振铃
+  active: yes
   check: &comm_check_caller_sipphone
     - &comm_check_redis
       description: 检查redis是否异常
@@ -215,6 +216,7 @@
     国内长途电话回呼SIPPHONE(振铃模式：振第一个，绑定顺序：SIPPHONE1先于SIPPHONE2，
     SIPHONE1：禁用关闭，长途关闭，SIPHONE2：禁用关闭，长途关闭)
   expection: SIPPhone1呼叫正常，SIPPhone2不振铃
+  active: yes
   check:
     *comm_check_caller_sipphone
   setup:
@@ -270,6 +272,7 @@
     本域电话回呼SIPPHONE(振铃模式：振第一个，绑定顺序：SIPPHONE1先于SIPPHONE2，
     SIPHONE1：禁用关闭，长途打开，SIPHONE2：禁用关闭，长途打开)
   expection: SIPPhone1呼叫正常，SIPPhone2不振铃
+  active: yes
   check:
     *comm_check_caller_sipphone
   setup:
@@ -307,6 +310,7 @@
     国内长途电话回呼SIPPHONE(振铃模式：振第一个，绑定顺序：SIPPHONE1先于SIPPHONE2，
     SIPHONE1：禁用关闭，长途打开，SIPHONE2：禁用关闭，长途打开)
   expection: SIPPhone1呼叫正常，SIPPhone2不振铃
+  active: yes
   check:
     *comm_check_caller_sipphone
   setup:

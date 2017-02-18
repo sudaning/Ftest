@@ -2,6 +2,7 @@
   name: V1.0.12_000025
   description: SIPPHONE(禁用打开，SIPPHONE互打关闭，长途关闭，禁拨400、95关闭)拨打SIPPHONE(同属一个APPID)
   expection: 语音提示禁用
+  active: yes
   check: &comm_check
     - &comm_check_redis
       description: 检查redis是否异常
@@ -133,6 +134,7 @@
   name: V1.0.12_000026
   description: SIPPHONE(禁用打开，SIPPHONE互打关闭，长途关闭，禁拨400、95关闭)拨打本域电话(固话)
   expection: 语音提示禁用
+  active: yes
   check: 
     *comm_check
   setup:
@@ -161,6 +163,7 @@
   name: V1.0.12_000027
   description: SIPPHONE(禁用打开，SIPPHONE互打关闭，长途关闭，禁拨400、95关闭)拨打国内长途电话(固话)
   expection: 语音提示禁用
+  active: yes
   check: 
     *comm_check
   setup:
@@ -189,6 +192,7 @@
   name: V1.0.12_000028
   description: SIPPHONE(禁用打开，SIPPHONE互打关闭，长途关闭，禁拨400、95关闭)拨打港澳台电话
   expection: 语音提示禁用
+  active: yes
   check: 
     *comm_check
   setup:
@@ -217,6 +221,7 @@
   name: V1.0.12_000029
   description: SIPPHONE(禁用打开，SIPPHONE互打关闭，长途关闭，禁拨400、95关闭)拨打国际电话
   expection: 语音提示禁用
+  active: yes
   check: 
     *comm_check
   setup:
@@ -245,6 +250,7 @@
   name: V1.0.12_000030
   description: SIPPHONE(禁用打开，SIPPHONE互打关闭，长途关闭，禁拨400、95关闭)拨打400电话
   expection: 语音提示禁用
+  active: yes
   check: 
     *comm_check
   setup:
