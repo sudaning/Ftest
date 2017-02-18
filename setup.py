@@ -1,6 +1,6 @@
 from setuptools import find_packages, setup
 
-version = '1.2'
+version = '1.4'
 author = 'Daning Su'
 author_email = 'sudaning@sina.com'
 description = "A pure Python library designed to auto-test for FREESWITCH easy "
@@ -24,8 +24,11 @@ platforms = ['linux']
 url = 'https://github.com/sudaning/Ftest'
 download_url = ''
 classifiers = [
-	'Development Status :: 3 - Alpha',
+	'Development Status :: 5 - Production/Stable',
+	'Intended Audience :: Science/Research',
+	'Natural Language :: English',
 	'Topic :: Text Processing',
+	'Operating System :: POSIX :: Linux',
 	'License :: OSI Approved :: MIT License',
 	'Programming Language :: Python :: 2',
 	'Programming Language :: Python :: 2.7',

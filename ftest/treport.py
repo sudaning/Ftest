@@ -868,7 +868,7 @@ class report(repComm):
 			server.sendmail(msg['from'], delivers.values(), msg.as_string())
 			server.quit()
 			if not silence:
-				p.stop(color_str("OK", "green") + " 投递给 " + str(delivers.values()))
+				p.stop(color_str("OK", "green") + " 投递给 " + str(["%s<%s>" % (name, email) for name, email in delivers.items()]))
 		except smtplib.SMTPRecipientsRefused:
 			print(color_str('Recipient refused', "red"))
 		except smtplib.SMTPAuthenticationError as err:
@@ -887,6 +887,7 @@ class report(repComm):
 			print(color_str('Sender refused', "red"))
 		except smtplib.SMTPException as e:
 		    print (color_str(e.message, "red"))
+
 			
 
 

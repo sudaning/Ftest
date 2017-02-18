@@ -1,7 +1,7 @@
 report:
   enable: yes
   #目前仅支持Chinese,English
-  language: English
+  language: Chinese
   sender:
     smtp: smtp.qq.com
     from: ras_33e9@qq.com
