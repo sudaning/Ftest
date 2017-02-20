@@ -1,6 +1,6 @@
 from setuptools import find_packages, setup
+from ftest import __version__ as version
 
-version = '1.5'
 author = 'Daning Su'
 author_email = 'sudaning@sina.com'
 description = "A pure Python library designed to auto-test for FREESWITCH easy "
