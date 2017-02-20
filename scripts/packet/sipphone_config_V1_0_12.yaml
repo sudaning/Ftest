@@ -1,6 +1,6 @@
 report:
   enable: yes
-  #目前仅支持Chinese,English
+  #目前仅支持 Chinese,English
   language: Chinese
   sender:
     smtp: smtp.qq.com

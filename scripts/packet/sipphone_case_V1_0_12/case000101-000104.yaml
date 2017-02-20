@@ -213,7 +213,7 @@
     国内长途电话回呼SIPPHONE(振铃模式：振第一个，绑定顺序：SIPPHONE1先于SIPPHONE2，
     SIPHONE1：禁用打开，长途关闭，SIPHONE2：禁用关闭，长途关闭)
   expection: SIPPhone1不振铃，SIPPhone2呼叫正常
-  active: no
+  active: yes
   check:
     *comm_check_caller_sipphone
   setup:
@@ -269,7 +269,7 @@
     本域电话回呼SIPPHONE(振铃模式：振第一个，绑定顺序：SIPPHONE1先于SIPPHONE2，
     SIPHONE1：禁用打开，长途打开，SIPHONE2：禁用关闭，长途打开)
   expection: SIPPhone1不振铃，SIPPhone2呼叫正常
-  active: no
+  active: yes
   check:
     *comm_check_caller_sipphone
   setup:
@@ -307,7 +307,7 @@
     国内长途电话回呼SIPPHONE(振铃模式：振第一个，绑定顺序：SIPPHONE1先于SIPPHONE2，
     SIPHONE1：禁用打开，长途打开，SIPHONE2：禁用关闭，长途打开)
   expection: SIPPhone1不振铃，SIPPhone2呼叫正常
-  active: no
+  active: yes
   check:
     *comm_check_caller_sipphone
   setup:

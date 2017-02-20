@@ -237,9 +237,16 @@ class report(repComm):
 		self.__sheet_subtitle_detail_detail = self.__language == 'Chinese' and "详细过程" or "Details"
 
 
+	# 语言
+	def language(self, l=''):
+		if l:
+			self.__language = l
+		else:
+			return self.__language
+
 	# ‘阶段’翻译
 	def stage(self, s):
-		if self.__language == 'Chinese':
+		if self.language() == 'Chinese':
 			return s == "check" and "检查" or \
 				s == "setup" and "初始化" or \
 				s == "execute" and "执行" or \
@@ -640,7 +647,7 @@ class report(repComm):
 
 	def generation(self, mod, rep_success, silence):
 		if not silence:
-			p = ProcBar().start("REPORT 01 " + "生成" + mod + "报告...")
+			p = ProcBar().start("REPORT 01 " + "%s '" % (self.__language == "Chinese" and "生成" or "generating") + mod + "' %s..." % (self.__language == "Chinese" and "报告" or "report"))
 		self.__mod = mod
 		self.__rep_success = rep_success
 		if mod in ["xls"]:
@@ -652,11 +659,11 @@ class report(repComm):
 		else:
 			f = self.__rep_xls()
 		if not silence:
-			p.stop(color_str("OK", "green") + " 路径:" + f)
+			p.stop(color_str("OK", "green") + " %s:" % (self.__language == "Chinese" and "路径" or "path") + f)
 
 	def mail(self, silence):
 		if not silence:
-			p = ProcBar().start("REPORT 02 " + "发送报告邮件...")
+			p = ProcBar().start("REPORT 02 " + "%s..." % (self.__language == "Chinese" and "发送报告" or "send mail"))
 		if self.__mod in ["xls"]:
 			f = self.__rep_xls_file
 		elif self.__mod in ["xml"]:
@@ -709,59 +716,59 @@ class report(repComm):
 		s += '<br />'
 		s += '</div>'
 		s += '<div style="font-size: 27px;">'
-		s += '<span style="font-family: 微软雅黑, Tahoma;"><b>%s</b></span>' % self.__summary_title.encode('utf-8')
+		s += '<span style="font-family: 微软雅黑, Tahoma;"><b>%s</b></span>' % self.__summary_title
 		s += '</div>'
 		s += '<div style="font-size: 24px;">'
 		s += '<br />'
 		s += '</div>'
 		s += '<div style="font-size: 24px;">'
-		s += '<span style="font-family: 微软雅黑, Tahoma;"><font color="#993300"><b>%s</b></font></span>' % self.__summary_subtitle_abstract.encode('utf-8')
+		s += '<span style="font-family: 微软雅黑, Tahoma;"><font color="#993300"><b>%s</b></font></span>' % self.__summary_subtitle_abstract
 		s += '</div>'
 		s += '<div style="">'
 		s += '<span style="background-color: rgba(0, 0, 0, 0); font-family: \'微软雅黑, Tahoma\'; font-size: 16px; line-height: 1.5;"></span>'
-		s += '<font face="微软雅黑, Tahoma">{0}：{1}</font>'.format(self.__summary_subtitle_abstract_name.encode('utf-8'), self.name())
+		s += '<font face="微软雅黑, Tahoma">{0}：{1}</font>'.format(self.__summary_subtitle_abstract_name, self.name())
 		s += '</div>'
 		s += '<div style="">'
-		s += '<font face="微软雅黑, Tahoma">{0}：{1}</font>'.format(self.__summary_subtitle_abstract_description.encode('utf-8'), self.description().encode('utf-8'))
-		s += '</div>'
-		s += '<div style="">'
-		s += '<font face="微软雅黑, Tahoma"><br /></font>'
-		s += '</div>'
-		s += '<div style="">'
-		s += '<font face="微软雅黑, Tahoma"><font><b style="color: rgb(153, 51, 0); font-size: x-large; line-height: 36px;">%s</b></font></font>' % self.__summary_subtitle_period.encode('utf-8')
-		s += '</div>'
-		s += '<div style="">'
-		s += '<font face="微软雅黑, Tahoma"><span style="line-height: 24px;"></span>{0}：{1}</font>'.format(self.__summary_subtitle_period_from.encode('utf-8'), self.start_time())
-		s += '</div>'
-		s += '<div style="">'
-		s += '<font face="微软雅黑, Tahoma"><span style="line-height: 24px;"></span>{0}：{1}</font>'.format(self.__summary_subtitle_period_to.encode('utf-8'), self.end_time())
-		s += '</div>'
-		s += '<div style="">'
-		s += '<font face="微软雅黑, Tahoma"><span style="line-height: 24px;"></span>{0}：{1}</font>'.format(self.__summary_subtitle_period_duration.encode('utf-8'), self.duration_time())
+		s += '<font face="微软雅黑, Tahoma">{0}：{1}</font>'.format(self.__summary_subtitle_abstract_description, self.description().encode('utf-8'))
 		s += '</div>'
 		s += '<div style="">'
 		s += '<font face="微软雅黑, Tahoma"><br /></font>'
 		s += '</div>'
 		s += '<div style="">'
-		s += '<span style="color: rgb(153, 51, 0); font-family: 微软雅黑, Tahoma; font-size: 24px;"><b>%s</b></span>' % self.__summary_subtitle_schedule.encode('utf-8')
+		s += '<font face="微软雅黑, Tahoma"><font><b style="color: rgb(153, 51, 0); font-size: x-large; line-height: 36px;">%s</b></font></font>' % self.__summary_subtitle_period
 		s += '</div>'
 		s += '<div style="">'
-		s += '<font face="微软雅黑, Tahoma">{0}：{1}</font>'.format(self.__summary_subtitle_schedule_suit.encode('utf-8'), len(set([case.suit_path() for case in self.__case_list])))
+		s += '<font face="微软雅黑, Tahoma"><span style="line-height: 24px;"></span>{0}：{1}</font>'.format(self.__summary_subtitle_period_from, self.start_time())
 		s += '</div>'
 		s += '<div style="">'
-		s += '<font face="微软雅黑, Tahoma">{0}：{1}</font>'.format(self.__summary_subtitle_schedule_case.encode('utf-8'),len(set([case.case_path() for case in self.__case_list])))
+		s += '<font face="微软雅黑, Tahoma"><span style="line-height: 24px;"></span>{0}：{1}</font>'.format(self.__summary_subtitle_period_to, self.end_time())
 		s += '</div>'
 		s += '<div style="">'
-		s += '<font face="微软雅黑, Tahoma">{0}：{1}</font>'.format(self.__summary_subtitle_schedule_task.encode('utf-8'),len(self.__case_list))
+		s += '<font face="微软雅黑, Tahoma"><span style="line-height: 24px;"></span>{0}：{1}</font>'.format(self.__summary_subtitle_period_duration, self.duration_time())
 		s += '</div>'
 		s += '<div style="">'
-		s += '<font face="微软雅黑, Tahoma">{0}：{1}</font>'.format(self.__summary_subtitle_schedule_script.encode('utf-8'), sum([len([proc for proc in case.procs() if proc.isrun() == "yes"]) for case in self.__case_list]))
+		s += '<font face="微软雅黑, Tahoma"><br /></font>'
+		s += '</div>'
+		s += '<div style="">'
+		s += '<span style="color: rgb(153, 51, 0); font-family: 微软雅黑, Tahoma; font-size: 24px;"><b>%s</b></span>' % self.__summary_subtitle_schedule
+		s += '</div>'
+		s += '<div style="">'
+		s += '<font face="微软雅黑, Tahoma">{0}：{1}</font>'.format(self.__summary_subtitle_schedule_suit, len(set([case.suit_path() for case in self.__case_list])))
+		s += '</div>'
+		s += '<div style="">'
+		s += '<font face="微软雅黑, Tahoma">{0}：{1}</font>'.format(self.__summary_subtitle_schedule_case,len(set([case.case_path() for case in self.__case_list])))
+		s += '</div>'
+		s += '<div style="">'
+		s += '<font face="微软雅黑, Tahoma">{0}：{1}</font>'.format(self.__summary_subtitle_schedule_task,len(self.__case_list))
+		s += '</div>'
+		s += '<div style="">'
+		s += '<font face="微软雅黑, Tahoma">{0}：{1}</font>'.format(self.__summary_subtitle_schedule_script, sum([len([proc for proc in case.procs() if proc.isrun() == "yes"]) for case in self.__case_list]))
 		s += '</div>'
 		s += '<div style="">'
 		s += '<br />'
 		s += '</div>'
 		s += '<div style="">'
-		s += '<font color="#993300" face="微软雅黑, Tahoma" size="5"><b>%s</b></font>' % self.__summary_subtitle_result.encode('utf-8')
+		s += '<font color="#993300" face="微软雅黑, Tahoma" size="5"><b>%s</b></font>' % self.__summary_subtitle_result
 		s += '</div>'
 		s += '<div style="font-size: 24px;">'
 		s += '<table border="1" bordercolor="#000000" cellpadding="2" cellspacing="0" style="font-size: 10pt; border-collapse:collapse; border:none" width="50%"> '
@@ -771,14 +778,14 @@ class report(repComm):
 		s += '<td width="50%" style="border: solid 1 #000000" nowrap=""><font size="2">'
 		s += '<div>'
 		s += '<font face="Verdana"></font>'
-		s += '<span style="font-family: 微软雅黑; background-color: transparent; line-height: 1.5;">%s</span>' % self.__summary_subtitle_result_passed.encode('utf-8')
+		s += '<span style="font-family: 微软雅黑; background-color: transparent; line-height: 1.5;">%s</span>' % self.__summary_subtitle_result_passed
 		s += '</div></font></td>'
 		s += '<td width="50%" style="border: solid 1 #000000" nowrap=""><font face="微软雅黑">{0}</font></td> '.format(success)
 		s += '</tr> '
 
 		s += '<tr> '
 		s += '<td width="50%" style="border: solid 1 #000000" nowrap="">'
-		s += '<span style="font-family: 微软雅黑; font-size: 14px; line-height: 21px; white-space: normal;">%s</span></td>' % self.__summary_subtitle_result_failed.encode('utf-8')
+		s += '<span style="font-family: 微软雅黑; font-size: 14px; line-height: 21px; white-space: normal;">%s</span></td>' % self.__summary_subtitle_result_failed
 		s += '<td width="50%" style="border: solid 1 #000000" nowrap=""><font size="2" face="微软雅黑">'
 		s += '<div>'
 		s += '{0}'.format(failed)
@@ -789,7 +796,7 @@ class report(repComm):
 		s += '<td width="50%" style="border: solid 1 #000000" nowrap=""><font size="2" face="微软雅黑">'
 		s += '<div>'
 		s += '<span style="font-size: 14px; white-space: normal; background-color: transparent; line-height: 1.5;"></span>'
-		s += '<span style="font-size: 14px; line-height: 21px; white-space: normal; background-color: transparent;">%s</span>' % self.__summary_subtitle_result_error.encode('utf-8')
+		s += '<span style="font-size: 14px; line-height: 21px; white-space: normal; background-color: transparent;">%s</span>' % self.__summary_subtitle_result_error
 		s += '</div></font></td> '
 		s += '<td width="50%" style="border: solid 1 #000000" nowrap=""><font size="2" face="微软雅黑">'
 		s += '<div>'
@@ -801,7 +808,7 @@ class report(repComm):
 		s += '<td width="50%" style="border: solid 1 #000000" nowrap=""><font size="2" face="微软雅黑">'
 		s += '<div>'
 		s += '<span style="font-size: 14px; white-space: normal; background-color: transparent; line-height: 1.5;"></span>'
-		s += '<span style="font-size: 14px; line-height: 21px; white-space: normal; background-color: transparent;">%s</span>' % self.__summary_subtitle_result_unactive.encode('utf-8')
+		s += '<span style="font-size: 14px; line-height: 21px; white-space: normal; background-color: transparent;">%s</span>' % self.__summary_subtitle_result_unactive
 		s += '</div></font></td> '
 		s += '<td width="50%" style="border: solid 1 #000000" nowrap=""><font size="2" face="微软雅黑">'
 		s += '<div>'
@@ -812,7 +819,7 @@ class report(repComm):
 		s += '<tr> '
 		s += '<td width="50%" style="border: solid 1 #000000" nowrap=""><font size="2" face="微软雅黑">'
 		s += '<div>'
-		s += '<span style="background-color: transparent; line-height: 1.5;">%s</span>'% self.__summary_subtitle_result_total.encode('utf-8')
+		s += '<span style="background-color: transparent; line-height: 1.5;">%s</span>'% self.__summary_subtitle_result_total
 		s += '</div></font></td> '
 		s += '<td width="50%" style="border: solid 1 #000000" nowrap=""><font size="2" face="微软雅黑">'
 		s += '<div>'
@@ -832,7 +839,7 @@ class report(repComm):
 		s += '<div style="MARGIN: 10px; FONT-FAMILY: verdana; FONT-SIZE: 10pt">'
 		s += '<div>'
 		s += '<div>'
-		s += '%s' % self.__summary_subtitle_signature.encode('utf-8')
+		s += '%s' % self.__summary_subtitle_signature
 		s += '</div>'
 		s += '</div>'
 		s += '<div>'
@@ -859,7 +866,7 @@ class report(repComm):
 
 		#加邮件头
 		msg['from'] = sender
-		msg['subject'] = Header('%s-%s(%s)' % (self.__summary_title.encode('utf-8'), self.name(), self.start_time()),'UTF-8')
+		msg['subject'] = Header('%s-%s(%s)' % (self.__summary_title, self.name(), self.start_time()),'UTF-8')
 		msg['to'] = ";".join(delivers.values())
 		#发送邮件
 		try:
@@ -868,7 +875,7 @@ class report(repComm):
 			server.sendmail(msg['from'], delivers.values(), msg.as_string())
 			server.quit()
 			if not silence:
-				p.stop(color_str("OK", "green") + " 投递给 " + str(["%s<%s>" % (name, email) for name, email in delivers.items()]))
+				p.stop(color_str("OK", "green") + " %s " % (self.__language == "Chinese" and "投递给" or "delivers:") + str(["%s<%s>" % (name, email) for name, email in delivers.items()]))
 		except smtplib.SMTPRecipientsRefused:
 			print(color_str('Recipient refused', "red"))
 		except smtplib.SMTPAuthenticationError as err:

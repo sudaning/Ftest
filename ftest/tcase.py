@@ -321,7 +321,7 @@ class case:
 		return self.__run_common_script(self.__teardown, step, caserep, "teardown", silence)
 
 	# 开始运行测试用例
-	def run(self, cnt, caserep, silence):
+	def run(self, cnt, caserep, lang, silence):
 		"""
 		run scripts, you can type ctrl + c to terminate the long time process
 		"""
@@ -350,7 +350,7 @@ class case:
 						self.__run_teardown(step, caserep, silence)
 			else:
 				if not silence:
-					print(color_str("active     : 否", "red"))
+					print(color_str("active     : %s" % (lang == "Chinese" and "否" or "no"), "red"))
 
 			# 报表收集信息结束
 			caserep.end_time("now")
@@ -455,6 +455,7 @@ class caseMgr:
 		rep = report(conf=self.__config)
 		rep.report_dir(rep_dir)
 		rep.start_time("now")
+		lang = rep.language()
 		# 循环测试用例packet --> suit(s) --> case(s)
 		cc = None
 		total = sum([len(cc.get("case", {}) or {}) for cc in self.__case])
@@ -469,7 +470,7 @@ class caseMgr:
 			for c in cc.get("case", {}) or {}:
 				cnt += 1
 				caserep = caseReport(packet_path = self.__packet_file, suit_path = cc["suit_path"], case_path = cc["case_path"])
-				case(cc["case_path"], c, self.__config, self.__script_dir).run(cnt, caserep, silence)
+				case(cc["case_path"], c, self.__config, self.__script_dir).run(cnt, caserep, lang, silence)
 				rep.add(caserep)
 				#print(rep, caserep)
 				if silence:
@@ -483,7 +484,7 @@ class caseMgr:
 					return
 
 			# 生成报表
-			s = color_str("\ngenerating report... ", "purple")
+			s = color_str("\nreport... ", "purple")
 			if silence:
 				p = ProcBar().start(s)
 			else:
@@ -501,11 +502,11 @@ class caseMgr:
 			
 			total, success, success_list, failed, failed_list, error, error_list, unactive, unactive_list = rep.statistics()
 			
-			print(color_str("\n统计"))
+			print(color_str("\n%s" % (lang == "Chinese" and "统计" or "statistics")))
 			print(color_str("==============="))
-			print(color_str(" 成功   : %d" % success, "green" if success else "white"))
-			print(color_str(" 失败   : %d" % failed, "red" if failed else "white"))
-			print(color_str(" 错误   : %d" % error, "red" if error else "white"))
-			print(color_str(" 未激活 : %d" % unactive, "red" if unactive else "white"))
+			print(color_str(" {0:<14}:{1}".format("%s" % (lang == "Chinese" and "成功" or "success"), success), "green" if success else "white"))
+			print(color_str(" {0:<14}:{1}".format("%s" % (lang == "Chinese" and "失败" or "failed"), failed), "red" if failed else "white"))
+			print(color_str(" {0:<14}:{1}".format("%s" % (lang == "Chinese" and "错误" or "error"), error), "red" if error else "white"))
+			print(color_str(" {0:<14}:{1}".format("%s" % (lang == "Chinese" and "未激活" or "unactive"), unactive), "red" if unactive else "white"))
 			print(color_str("---------------"))
-			print(color_str(" 总计 : %d" % total, "sky_blue"))
+			print(color_str(" {0:<14}:{1}".format("%s" % (lang == "Chinese" and "总计" or "total"), total), "sky_blue"))
