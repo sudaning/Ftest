@@ -1,4 +1,5 @@
-#!/usr/bin/env python 
+
+#! /path/to/ENV/bin/python
 # -*- coding: utf-8 -*- 
 from optparse import OptionParser
 import os,sys
@@ -9,9 +10,9 @@ if __name__ == '__main__':
 	parser.add_option('-i', '--addrs', dest='addrs', default='10.0.33.54:7000,10.0.33.54:7001', help='redis server IP address')
 	(options, args) = parser.parse_args()  
 
-	from neko import redisCluterBee
-	r = redisCluterBee(options.addrs, debug=False)
 	try:
+		from neko import redisCluterBee
+		r = redisCluterBee(options.addrs, debug=False)
 		r.get('testing')	
 		print("INFO:connect redis success. addrs:%s" % (options.addrs))
 		print(0)

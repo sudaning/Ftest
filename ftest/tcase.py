@@ -167,7 +167,7 @@ class case:
 		# 解析之后第一个必然是脚本的名字，后续的是参数
 		c = script_cmd.split(' ')
 		f = os.path.join(self.__script_dir, c[0])
-		pargs = [self.__python_run, f] + c[1:] 
+		pargs = [self.__config_dict.get("run", {}).get("python", self.__python_run), f] + c[1:] 
 		
 		# 提示开始测试了...
 		procrep.script(f, ' '.join(c[1:]))

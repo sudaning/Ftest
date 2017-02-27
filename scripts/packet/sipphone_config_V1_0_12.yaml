@@ -18,6 +18,10 @@ report:
    #liqiang: 635216@33e9.com
    #zhangmingxue: 635227@33e9.com
 
+run:
+  #python: "/usr/bin/python"
+  python: "/root/yyy/bin/python"
+
 server:
   # 被测试ras服务器(esl连接和呼叫信息)
   ras_switch_esl:

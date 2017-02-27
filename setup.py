@@ -8,11 +8,9 @@ description = "A pure Python library designed to auto-test for FREESWITCH easy "
 with open('README.rst') as f:
     long_description = f.read()
 
-install_requires = [
-	'pyNeko>=3.0',
-	'pyyaml>=3.12',
-	'xlwt>=1.2.0',
-]
+with open('./requirements.txt', 'r') as f:
+	 requirements = f.readlines()
+	 install_requires = [x for x in requirements if (x and x[0] != '#')]
 
 license = 'LICENSE'
 
