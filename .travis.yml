@@ -25,13 +25,9 @@ install:
   # Replace dep1 dep2 ... with your dependencies
   - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION
   - source activate test-environment
-
-  # install ftest
-  - cd lib
-  - sudo tar zxf swig-3.0.12.tar.gz
-  - cd swig-3.0.12
-  - sudo ./configure && sudo make && sudo make install
-  - cd ../..
+  - sudo apt-get install libpcre3 libpcre3-dev swig
+  - sudo pip install pyFneko
+  - ls /usr/local/lib/python2.7/site-packages/
   - python setup.py install  
 
 # command to run tests
