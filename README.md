@@ -1,11 +1,5 @@
 #Welcome to Ftest
-![](https://travis-ci.org/sudaning/Ftest.svg?branch=master)
-![](https://img.shields.io/pypi/v/pyFtest.svg)
-![](https://img.shields.io/badge/python-3.5-green.svg)
-![](https://img.shields.io/badge/python-2.7-green.svg)
-![](https://img.shields.io/badge/docs-stable-brightgreen.svg?style=flat)
-![](https://img.shields.io/github/stars/sudaning/Ftest.svg)
-![](https://img.shields.io/github/forks/sudaning/Ftest.svg)
+[![Version][version-badge]][version-link] ![Supported-python-version][python27-badge] [![Build Status][travis-badge]][travis-link]  [![Coverage][coverage-badge]][coverage-link] ![Star][stars] ![Fork][forks] [![MIT License][license-badge]](LICENSE.md)
 
 ##Introduction
 Ftest is a pure Python library designed to auto-test for secondary development base on FREESWITCH.
@@ -60,3 +54,14 @@ if __name__ == '__main__':
 **Welcome to use pyFtest (●'◡'●)ﾉ♥**  
 If you find any bug, please report it to me by opening a issue.
 pyNeko needs to be improved, your contribution will be welcomed.
+
+[version-badge]:   https://img.shields.io/pypi/v/pyFtest.svg?label=pypi
+[version-link]:    https://pypi.python.org/pypi/pyFtest/
+[python27-badge]:  https://img.shields.io/badge/python-2.7-green.svg
+[stars]:           https://img.shields.io/github/stars/sudaning/Ftest.svg
+[forks]:           https://img.shields.io/github/forks/sudaning/Ftest.svg
+[travis-badge]:    https://img.shields.io/travis/sudaning/Ftest.svg
+[travis-link]:     https://travis-ci.org/sudaning/Ftest
+[coverage-badge]:  https://img.shields.io/coveralls/sudaning/Ftest.svg
+[coverage-link]:   https://coveralls.io/github/sudaning/Ftest
+[license-badge]:   https://img.shields.io/badge/license-MIT-007EC7.svg
