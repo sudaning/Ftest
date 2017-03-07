@@ -26,11 +26,10 @@ install:
   - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION
   - source activate test-environment
   - sudo apt-get install libpcre3 libpcre3-dev swig
-  - sudo pip install pyFneko
-  - ls /usr/local/lib/python2.7/site-packages/
-  - python setup.py install  
+  - pip install -r requirements.txt
+  - python setup.py install  # install
 
 # command to run tests
 script:
   - cd tests
-  - python ftest_test.py
+  - python test.py
