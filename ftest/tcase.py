@@ -35,6 +35,18 @@ class caseCmd:
 		except Exception as err:
 			raise SyntaxError, "config format is illegal, not find keywords 'action' or 'description' in " + self.__cmd_file
 
+	def __enter__(self):
+		return self
+
+	def __exit__(self, exc_type, exc_value, exc_tb):
+		if exc_tb:
+			return False
+		else:
+			self.__del__()
+
+	def __del__(self):
+		pass
+
 	def action(self):
 		"""
 		action specify the script what will do
@@ -143,6 +155,18 @@ class case:
 		self.__setup = context.get('setup', [])
 		self.__execute = context.get('execute', [])
 		self.__teardown = context.get('teardown', [])
+
+	def __enter__(self):
+		return self
+
+	def __exit__(self, exc_type, exc_value, exc_tb):
+		if exc_tb:
+			return False
+		else:
+			self.__del__()
+
+	def __del__(self):
+		pass
 
 	def __run_script_part(self, script, step, caserep, stage, silence, mod = "common"):
 		"""
@@ -368,6 +392,18 @@ class caseMgr:
 		self.__case = []
 		self.__config = None
 		self.__debug = debug
+
+	def __enter__(self):
+		return self
+
+	def __exit__(self, exc_type, exc_value, exc_tb):
+		if exc_tb:
+			return False
+		else:
+			self.__del__()
+
+	def __del__(self):
+		pass
 
 	def __load_config(self):
 		"""

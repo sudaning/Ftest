@@ -37,6 +37,18 @@ class repComm:
 		self.__start_time = None
 		self.__end_time = None
 
+	def __enter__(self):
+		return self
+
+	def __exit__(self, exc_type, exc_value, exc_tb):
+		if exc_tb:
+			return False
+		else:
+			self.__del__()
+
+	def __del__(self):
+		pass
+
 	def name(self, name=""):
 		if name:
 			self.__name = name
@@ -93,6 +105,18 @@ class caseProcReport(repComm):
 		self.__details = "" # 执行详细信息
 		repComm.__init__(self, description = description)
 		
+	def __enter__(self):
+		return self
+
+	def __exit__(self, exc_type, exc_value, exc_tb):
+		if exc_tb:
+			return False
+		else:
+			self.__del__()
+
+	def __del__(self):
+		pass
+
 	def stage(self, st=""):
 		if st:
 			self.__stage = st
@@ -135,6 +159,18 @@ class caseReport(repComm):
 		self.__proc_list = [] # 执行过程列表
 		self.__active = True
 		repComm.__init__(self, name = name, description = description)
+
+	def __enter__(self):
+		return self
+
+	def __exit__(self, exc_type, exc_value, exc_tb):
+		if exc_tb:
+			return False
+		else:
+			self.__del__()
+
+	def __del__(self):
+		pass
 
 	def packet_path(self, p=""):
 		if p:
@@ -236,6 +272,17 @@ class report(repComm):
 		self.__sheet_subtitle_detail_script = self.__language == 'Chinese' and "运行脚本" or "Script Running"
 		self.__sheet_subtitle_detail_detail = self.__language == 'Chinese' and "详细过程" or "Details"
 
+	def __enter__(self):
+		return self
+
+	def __exit__(self, exc_type, exc_value, exc_tb):
+		if exc_tb:
+			return False
+		else:
+			self.__del__()
+
+	def __del__(self):
+		pass
 
 	# 语言
 	def language(self, l=''):
