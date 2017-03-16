@@ -1,12 +1,12 @@
-#Welcome to Ftest
+# Welcome to Ftest
 [![Version][version-badge]][version-link] ![Supported-python-version][python27-badge] [![Build Status][travis-badge]][travis-link]  [![Coverage][coverage-badge]][coverage-link] ![Star][stars] ![Fork][forks] [![MIT License][license-badge]](LICENSE.md)
 
-##Introduction
+## Introduction
 Ftest is a pure Python library designed to auto-test for secondary development base on FREESWITCH.
 You can use Ftest to auto-test FREESWITCH functions easy.
 In [/scripts](https://github.com/sudaning/Ftest/tree/master/scripts) , there are some scripts written by me for daily use.
 
-##Installation
+## Installation
 1. Via **pip**  
 ```pip install pyFtest```  
 2. Via **easy_install**  
@@ -14,11 +14,11 @@ In [/scripts](https://github.com/sudaning/Ftest/tree/master/scripts) , there are
 3. From **source**  
 ```python setup.py install```
 
-##upgrading
+## upgrading
 1. Via **pip**  
 ```pip install --upgrade pyFtest```
 
-##Examples
+## Examples
 
 ```python
 #!/usr/bin/env python 
@@ -50,7 +50,7 @@ if __name__ == '__main__':
 	c.load() and c.run(options.rep_mod, report_dir_path, options.rep_success, options.silence)
 ```
 
-##From the author
+## From the author
 **Welcome to use pyFtest (●'◡'●)ﾉ♥**  
 If you find any bug, please report it to me by opening a issue.
 pyNeko needs to be improved, your contribution will be welcomed.
