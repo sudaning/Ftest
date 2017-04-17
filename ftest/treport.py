@@ -232,8 +232,8 @@ class report(repComm):
 		self.__summary_subtitle_schedule = self.__language == 'Chinese' and "计划" or "Schedule"
 		self.__summary_subtitle_schedule_suit = self.__language == 'Chinese' and "组(套)" or "Suit"
 		self.__summary_subtitle_schedule_case = self.__language == 'Chinese' and "活动" or "Case"
-		self.__summary_subtitle_schedule_task = self.__language == 'Chinese' and "用例" or "Task"
-		self.__summary_subtitle_schedule_script = self.__language == 'Chinese' and "脚本" or "Script"
+		self.__summary_subtitle_schedule_task = self.__language == 'Chinese' and "用例(包含重复)" or "Task(duplicated)"
+		self.__summary_subtitle_schedule_script = self.__language == 'Chinese' and "脚本(包含重复)" or "Script(duplicated)"
 
 		self.__summary_subtitle_result = self.__language == 'Chinese' and "结果" or "Result"
 		self.__summary_subtitle_result_passed = self.__language == 'Chinese' and "通过" or "Passed"
@@ -667,7 +667,7 @@ class report(repComm):
 							if end + 1 == row[0]:
 								end = row[1]
 							else:
-								merge_row_list.append((start, end, stage))
+								merge_row_list.append({"start":start, "end":end, "stage":stage})
 								begin = True
 						else:
 							start, end = row[0], row[1]
@@ -694,7 +694,7 @@ class report(repComm):
 
 	def generation(self, mod, rep_success, silence):
 		if not silence:
-			p = ProcBar().start("REPORT 01 " + "%s '" % (self.__language == "Chinese" and "生成" or "generating") + mod + "' %s..." % (self.__language == "Chinese" and "报告" or "report"))
+			p = ProcBar().start("REPORT 01 " + "%s '" % (self.__language == "Chinese" and "生成" or "generating") + mod + "' %s... " % (self.__language == "Chinese" and "报告" or "report"))
 		self.__mod = mod
 		self.__rep_success = rep_success
 		if mod in ["xls"]:
@@ -710,7 +710,7 @@ class report(repComm):
 
 	def mail(self, silence):
 		if not silence:
-			p = ProcBar().start("REPORT 02 " + "%s..." % (self.__language == "Chinese" and "发送报告" or "send mail"))
+			p = ProcBar().start("REPORT 02 " + "%s... " % (self.__language == "Chinese" and "发送报告" or "send mail"))
 		if self.__mod in ["xls"]:
 			f = self.__rep_xls_file
 		elif self.__mod in ["xml"]:
@@ -742,7 +742,7 @@ class report(repComm):
 
 		if not enable:
 			if not silence:
-				p.stop(color_str("DISABLE", "red"))
+				p.stop(color_str("DISABLED", "red"))
 			return 
 
 		#创建一个带附件的实例

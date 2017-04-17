@@ -1,4 +1,4 @@
 # case
-case:
+demo_case2:
   - case3.yaml
   - case2.yaml

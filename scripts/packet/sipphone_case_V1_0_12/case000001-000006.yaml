@@ -3,6 +3,7 @@
   description: SIPPHONE(禁用打开，SIPPHONE互打关闭，长途关闭，禁拨400、95关闭)拨打SIPPHONE(同属一个APPID)
   expection: 语音提示禁用
   active: yes
+  times: 3
   check: &comm_check
     - &comm_check_redis
       description: 检查redis是否异常

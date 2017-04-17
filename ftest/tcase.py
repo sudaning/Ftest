@@ -134,10 +134,11 @@ class case:
 	#. description -- specify what's the case (just show)
 	#. expection   -- specify expected result when the case done (just show)
 	#. active      -- specify the case active or deactive (enable or not)
+	#. times       -- how many times the case run
 	#. check       -- stage 1 when the case running, check the environment is OK or not 
 	#. setup       -- stage 2 when the case running, construct some essential data for the case 
 	#. execute     -- stage 3 when the case running, testing a series of conditions in script
-	#. teardown    -- stage 4 when the case running, recovery environment to before the case run
+	#. teardown    -- stage 4 when the case running, recovery environment to the case before run
 	"""
 
 	__python_run = "/usr/bin/python"
@@ -150,11 +151,12 @@ class case:
 		self.__name = (context.get('name', '') or '[default]').strip('\n')
 		self.__description = (context.get('description', '') or '[default]').strip('\n')
 		self.__expection = (context.get('expection', '') or '[default]').strip('\n')
-		self.__active = context.get('active', True)
-		self.__check = context.get('check', [])
-		self.__setup = context.get('setup', [])
-		self.__execute = context.get('execute', [])
-		self.__teardown = context.get('teardown', [])
+		self.__active = context.get('active', True) or True
+		self.__times = context.get('times', 1) or 1
+		self.__check = context.get('check', []) or []
+		self.__setup = context.get('setup', []) or []
+		self.__execute = context.get('execute', []) or []
+		self.__teardown = context.get('teardown', []) or []
 
 	def __enter__(self):
 		return self
@@ -167,6 +169,9 @@ class case:
 
 	def __del__(self):
 		pass
+
+	def times(self):
+		return self.__times
 
 	def __run_script_part(self, script, step, caserep, stage, silence, mod = "common"):
 		"""
@@ -244,10 +249,12 @@ class case:
 			else:
 				# 若执行失败，则输出脚本的执行过程
 				procrep.result(1)
+				details = res[0].split('\n')[:-2]
 				if not silence:
 					print("... " + color_str("ERROR", 'red'))
-					print("- details:")
-				for detail in res[0].split('\n')[:-2]:
+					if details:
+						print("- details:")
+				for detail in details:
 					if not silence:
 						print(color_str("-- " + detail, 'red' if 'ERR' in detail[:6] else 'sky_blue'))
 					procrep.details(detail)
@@ -320,11 +327,15 @@ class case:
 			else:
 				# 若执行失败，则输出脚本的执行过程
 				c['rep'].result(1)
-
+				details = res[0].split('\n')[:-2]
 				if not silence:
-					print("PROCESS %02d " % (step + cnt) + c['cmd'].description().encode('utf-8') + "... " + color_str("ERROR", 'red'))
-					print("- details:")
-				for detail in res[0].split('\n')[:-2]:
+					
+					if details:
+						print("PROCESS %02d " % (step + cnt) + c['cmd'].description().encode('utf-8') + "... " + color_str("ERROR", 'red'))
+						print("- details:")
+					else:
+						print("PROCESS %02d " % (step + cnt) + c['cmd'].description().encode('utf-8') + "... " + color_str("ERROR (no details)", 'red'))
+				for detail in details:
 					if not silence:
 						print(color_str("-- " + detail, 'red' if 'ERR' in detail else 'sky_blue'))
 					c['rep'].details(detail)
@@ -345,18 +356,20 @@ class case:
 		return self.__run_common_script(self.__teardown, step, caserep, "teardown", silence)
 
 	# 开始运行测试用例
-	def run(self, cnt, caserep, lang, silence):
+	def run(self, context):
 		"""
 		run scripts, you can type ctrl + c to terminate the long time process
 		"""
+		cnt, caserep, lang, silence, dup_time, dup_times = context["count"], context["case_rep"], context["lang"], context["silence"], context["dup_time"], context["dup_times"]
+		name = dup_time == 0 and self.__name or "%s(dup_%d)" % (self.__name, dup_time)
 		if not silence:
-			print(color_str("\ncase" + str(cnt) + ": " + self.__name + " testing... ", "purple"))
-			print(color_str("description: " + self.__description, "yellow"))
-			print(color_str("expection  : " + self.__expection, "sky_blue"))
+			print(color_str("\ncase%d: %s testing%s... " % (cnt, name, ("(duplicated %d)" % dup_times) if dup_times > 1 and dup_time == 0 else ""), "purple"))
+			print(color_str("description: %s" % (self.__description), "yellow"))
+			print(color_str("expection  : %s" % (self.__expection), "sky_blue"))
 
 		try:
 			# 报表收集信息开始
-			caserep.name(self.__name)
+			caserep.name(name)
 			caserep.description(self.__description)
 			caserep.expection(self.__expection)
 			caserep.active(self.__active)
@@ -497,6 +510,9 @@ class caseMgr:
 		total = sum([len(cc.get("case", {}) or {}) for cc in self.__case])
 		
 		s = color_str("total ", "purple") + color_str("%d" % total, "sky_blue") + color_str(" case(s) testing... ", "purple")
+		if not total:
+			return
+			
 		if silence:
 			p = ProcBar(mod='details').set_details(total, widget_type="count").start(s)
 		else:
@@ -505,9 +521,11 @@ class caseMgr:
 		for cc in self.__case:
 			for c in cc.get("case", {}) or {}:
 				cnt += 1
-				caserep = caseReport(packet_path = self.__packet_file, suit_path = cc["suit_path"], case_path = cc["case_path"])
-				case(cc["case_path"], c, self.__config, self.__script_dir).run(cnt, caserep, lang, silence)
-				rep.add(caserep)
+				with case(cc["case_path"], c, self.__config, self.__script_dir) as ct:
+					for t in range(0, ct.times()):
+						caserep = caseReport(packet_path = self.__packet_file, suit_path = cc["suit_path"], case_path = cc["case_path"])
+						ct.run({"count":cnt, "case_rep":caserep, "lang":lang, "silence":silence, "dup_time":t, "dup_times": ct.times()})
+						rep.add(caserep)
 				#print(rep, caserep)
 				if silence:
 					p.move()
