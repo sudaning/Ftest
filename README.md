@@ -50,7 +50,7 @@ if __name__ == '__main__':
 	c.load() and c.run(options.rep_mod, report_dir_path, options.rep_success, options.silence)
 	
 ```
-
+ 
 ## From the author
 **Welcome to use pyFtest (●'◡'●)ﾉ♥**  
 If you find any bug, please report it to me by opening a issue.
